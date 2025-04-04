@@ -36,3 +36,36 @@ func GetUserListMockData() []models.User {
 		},
 	}
 }
+
+func GetTodoListMockData() []models.Todo {
+	return []models.Todo{
+		{
+			ID:          1,
+			UserId:      1,
+			Description: "Learn AWS",
+			TargetDate:  20250615,
+			Done:        false,
+		},
+		{
+			ID:          2,
+			UserId:      1,
+			Description: "Learn Azure",
+			TargetDate:  20250715,
+			Done:        false,
+		},
+		{
+			ID:          3,
+			UserId:      1,
+			Description: "Learn DevOp",
+			TargetDate:  20250815,
+			Done:        false,
+		},
+		{
+			ID:          4,
+			UserId:      1,
+			Description: "Learn Deno",
+			TargetDate:  20250915,
+			Done:        false,
+		},
+	}
+}

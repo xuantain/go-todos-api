@@ -25,4 +25,13 @@ func SetupRoutes(r *gin.Engine) {
 	r.GET("/users/:id", userHandler.Retrieve)
 	r.PUT("/users/:id", userHandler.UpdateUser)
 	r.DELETE("/users/:id", userHandler.DeleteUser)
+
+	// Todo Apis
+	todoHandler := new(handlers.TodoHandler)
+
+	r.GET("/todos", todoHandler.GetAllTodos)
+	r.POST("/todos", todoHandler.CreateTodo)
+	r.GET("/todos/:id", todoHandler.Retrieve)
+	r.PUT("/todos/:id", todoHandler.UpdateTodo)
+	r.DELETE("/todos/:id", todoHandler.DeleteTodo)
 }
