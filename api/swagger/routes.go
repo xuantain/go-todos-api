@@ -11,11 +11,13 @@ func SetupRoutes(r *gin.Engine) {
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 
+	// Hello World Apis
 	helloWorldHandler := new(handlers.HelloWorldHandler)
 
 	r.GET("/hello-word", helloWorldHandler.SayHelloWorld)
 	r.GET("/hello-word/:username", helloWorldHandler.SayHelloWorldTo)
 
+	// User Apis
 	userHandler := new(handlers.UserHandler)
 
 	r.GET("/users", userHandler.GetAllUsers)
