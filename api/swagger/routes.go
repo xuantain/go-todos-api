@@ -17,6 +17,12 @@ func SetupRoutes(r *gin.Engine) {
 	r.GET("/hello-word", helloWorldHandler.SayHelloWorld)
 	r.GET("/hello-word/:username", helloWorldHandler.SayHelloWorldTo)
 
+	// Authentication
+	authHandler := new(handlers.AuthenticationHandler)
+
+	r.GET("basicauth", authHandler.GetBasicAuth)
+	r.GET("authenticate", authHandler.Authenticate)
+
 	// User Apis
 	userHandler := new(handlers.UserHandler)
 
