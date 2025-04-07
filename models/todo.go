@@ -1,9 +1,9 @@
 package models
 
 type Todo struct {
-	ID          int    `json:"todo_id,omitempty"`
-	UserId      int    `json:"user_id,omitempty"`
+	ID          int    `json:"id,string"`
+	UserName    string `json:"username"`
 	Description string `json:"description"`
-	TargetDate  int64  `json:"target_date"`
+	TargetDate  string `json:"targetDate"`
 	Done        bool   `json:"done"`
 }
