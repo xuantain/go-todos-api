@@ -14,8 +14,8 @@ func SetupRoutes(r *gin.Engine) {
 	// Hello World Apis
 	helloWorldHandler := new(handlers.HelloWorldHandler)
 
-	r.GET("/hello-word", helloWorldHandler.SayHelloWorld)
-	r.GET("/hello-word/:username", helloWorldHandler.SayHelloWorldTo)
+	r.GET("/hello-world", helloWorldHandler.SayHelloWorld)
+	r.GET("/hello-world-bean/path-variable/:username", helloWorldHandler.SayHelloWorldTo)
 
 	// Authentication
 	authHandler := new(handlers.AuthenticationHandler)

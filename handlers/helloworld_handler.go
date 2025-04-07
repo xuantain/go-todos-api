@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,7 +16,7 @@ func (u HelloWorldHandler) SayHelloWorld(c *gin.Context) {
 func (u HelloWorldHandler) SayHelloWorldTo(c *gin.Context) {
 	if c.Param("username") != "" {
 		username := c.Param("username")
-		c.JSON(http.StatusOK, gin.H{"message": "Welcome to", "user": username})
+		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("Hello %s!", username)})
 		// NOTE: just use IndentedJSON for dev because it would consume more CPU.
 		// 	But we already have Pretty-print plugin on Browser, so this seems redundant.
 		// c.IndentedJSON(http.StatusOK, gin.H{"message": "Welcome to", "user": username})
