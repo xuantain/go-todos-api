@@ -20,24 +20,29 @@ func SetupRoutes(r *gin.Engine) {
 	// Authentication
 	authHandler := new(handlers.AuthenticationHandler)
 
-	r.GET("basicauth", authHandler.GetBasicAuth)
-	r.GET("authenticate", authHandler.Authenticate)
+	// Note: Create a route-group with specific middlewares
+	r.GET("/authenticate", authHandler.Authenticate)
+	authoried := r.Group("/", gin.BasicAuth(gin.Accounts{
+		"todo": "aaa",
+	}))
+
+	authoried.GET("/basicauth", authHandler.CheckBasicAuth)
 
 	// User Apis
 	userHandler := new(handlers.UserHandler)
 
 	r.GET("/users", userHandler.GetAllUsers)
-	r.POST("/users", userHandler.CreateUser)
-	r.GET("/users/:id", userHandler.Retrieve)
-	r.PUT("/users/:id", userHandler.UpdateUser)
-	r.DELETE("/users/:id", userHandler.DeleteUser)
+	authoried.POST("/users", userHandler.CreateUser)
+	authoried.GET("/users/:id", userHandler.Retrieve)
+	authoried.PUT("/users/:id", userHandler.UpdateUser)
+	authoried.DELETE("/users/:id", userHandler.DeleteUser)
 
 	// Todo Apis
 	todoHandler := new(handlers.TodoHandler)
 
-	r.GET("/todos", todoHandler.GetAllTodos)
-	r.POST("/todos", todoHandler.CreateTodo)
-	r.GET("/todos/:id", todoHandler.Retrieve)
-	r.PUT("/todos/:id", todoHandler.UpdateTodo)
-	r.DELETE("/todos/:id", todoHandler.DeleteTodo)
+	authoried.GET("/todos", todoHandler.GetAllTodos)
+	authoried.POST("/todos", todoHandler.CreateTodo)
+	authoried.GET("/todos/:id", todoHandler.Retrieve)
+	authoried.PUT("/todos/:id", todoHandler.UpdateTodo)
+	authoried.DELETE("/todos/:id", todoHandler.DeleteTodo)
 }
