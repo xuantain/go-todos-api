@@ -7,7 +7,6 @@ import (
 
 	api "go-todos-api/api/swagger"
 	"go-todos-api/config"
-	"go-todos-api/middlewares"
 
 	"github.com/gin-gonic/gin"
 )
@@ -31,7 +30,8 @@ func main() {
 	api.SetupRoutes(server)
 
 	// server.Use(middlewares.AuthMiddleware())
-	server.Use(middlewares.CORSMiddleware())
+	// server.Use(middlewares.JwtAuthMiddleware())
+	// server.Use(middlewares.CORSMiddleware())
 
 	address := config.GetString("server.address")
 	port := config.GetString("server.port")
