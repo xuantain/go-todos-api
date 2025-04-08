@@ -23,9 +23,7 @@ func SetupRoutes(r *gin.Engine) {
 	authHandler := new(handlers.AuthenticationHandler)
 
 	// Note: Basic Authentication
-	// authoried := r.Group("/", gin.BasicAuth(gin.Accounts{
-	// 	"todo": "aaa",
-	// }))
+	// authoried := r.Group("/", BasicAuthMiddleware)
 	// r.GET("/basicauth", authHandler.CheckBasicAuth) // Public route
 
 	// Note: Jwt Authentication
