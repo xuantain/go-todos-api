@@ -16,6 +16,7 @@ func SetupRoutes(r *gin.Engine) {
 	// Hello World Apis
 	helloWorldHandler := new(handlers.HelloWorldHandler)
 
+	// Public routes
 	r.GET("/hello-world", helloWorldHandler.SayHelloWorld)
 	r.GET("/hello-world-bean/path-variable/:username", helloWorldHandler.SayHelloWorldTo)
 
@@ -40,6 +41,19 @@ func SetupRoutes(r *gin.Engine) {
 		c.SetCookie("token", "", -1, "/", "localhost", false, true)
 		c.Redirect(http.StatusSeeOther, "/")
 	})
+
+	// {
+	// 	api.GET("/profile", routes.GetProfile)
+
+	// 	// Note: Use RoleMiddleware for Role-Based Access Control (RBAC)
+	// 	// Admin-only routes
+	// 	admin := authoried.Group("/admin")
+	// 	admin.Use(middlewares.RoleMiddleware("admin")) // Only users with "admin" role can access
+	// 	{
+	// 		admin.GET("/users", userHandler.GetAllUsers)
+	// 		admin.POST("/users", userHandler.CreateUser)
+	// 	}
+	// }
 
 	// User Apis
 	userRoutes := authoried.Group("/")
