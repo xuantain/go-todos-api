@@ -2,6 +2,8 @@ package api
 
 import (
 	"go-todos-api/handlers"
+	"go-todos-api/middlewares"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,12 +22,26 @@ func SetupRoutes(r *gin.Engine) {
 	// Authentication
 	authHandler := new(handlers.AuthenticationHandler)
 
-	// Note: Create a route-group with specific middlewares
-	r.GET("/authenticate", authHandler.Authenticate)
-	authoried := r.Group("/", gin.BasicAuth(gin.Accounts{
-		"todo": "aaa",
-	}))
-	authoried.GET("/basicauth", authHandler.CheckBasicAuth)
+	// Note: Basic Authentication
+	// authoried := r.Group("/", gin.BasicAuth(gin.Accounts{
+	// 	"todo": "aaa",
+	// }))
+	// r.GET("/basicauth", authHandler.CheckBasicAuth) // Public route
+
+	// Note: Jwt Authentication
+	// Protected routes
+	// authoried := r.Group("/")
+	// authoried.Use(middlewares.JwtAuthMiddleware()) // All routes in this group require authentication
+	authoried := r.Group("/", middlewares.JwtAuthMiddleware()) // Short way to add middleware to group-routes
+	// Apply middleware to specific routes that require authentication
+	// r.POST("/add", middlewares.JwtAuthMiddleware, func(c *gin.Context) {
+	// 	// ...
+	// })
+	r.POST("/authenticate", authHandler.Login) // Public route
+	r.GET("/logout", func(c *gin.Context) {
+		c.SetCookie("token", "", -1, "/", "localhost", false, true)
+		c.Redirect(http.StatusSeeOther, "/")
+	})
 
 	// User Apis
 	userRoutes := authoried.Group("/")
