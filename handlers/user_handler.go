@@ -48,7 +48,7 @@ func (u UserHandler) Retrieve(c *gin.Context) {
 
 	if c.Param("id") != "" {
 
-		userId := c.GetInt("id")
+		userId := c.GetUint("id")
 		user := userRepo.GetByID(userId)
 		fmt.Println(user)
 

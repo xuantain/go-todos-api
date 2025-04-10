@@ -7,6 +7,7 @@ import (
 
 	api "go-todos-api/api/swagger"
 	"go-todos-api/config"
+	"go-todos-api/db"
 
 	"github.com/gin-gonic/gin"
 )
@@ -28,6 +29,9 @@ func main() {
 
 	server := gin.Default()
 	api.SetupRoutes(server)
+
+	database := db.InitDb()
+	db.SeedDB(database)
 
 	// server.Use(middlewares.AuthMiddleware())
 	// server.Use(middlewares.JwtAuthMiddleware())

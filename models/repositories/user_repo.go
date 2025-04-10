@@ -12,7 +12,7 @@ func (h UserRepo) GetAllUsers() []models.User {
 	return userList
 }
 
-func (h UserRepo) GetByID(id int) *models.User {
+func (h UserRepo) GetByID(id uint) *models.User {
 
 	for _, user := range userList {
 		if user.ID == id {

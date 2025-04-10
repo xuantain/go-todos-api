@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"go-todos-api/db"
+	"go-todos-api/models"
 	"net/http"
 	"strings"
 	"time"
@@ -12,8 +14,8 @@ import (
 type AuthenticationHandler struct{}
 
 func (auth AuthenticationHandler) CheckBasicAuth(c *gin.Context) {
-	user := c.MustGet(gin.AuthUserKey).(string)
-	c.JSON(http.StatusOK, gin.H{"user": user, "message": "Welcome back!"})
+	username := c.MustGet(gin.AuthUserKey).(string)
+	c.JSON(http.StatusOK, gin.H{"user": username, "message": "Welcome back!"})
 }
 
 var (
@@ -35,6 +37,13 @@ type User struct {
 
 func authenticateUser(username, password string) (User, error) {
 	// todo: This should be handled by DB layer
+	var user models.User
+	db := db.Conn()
+
+	if err := db.Where("name = ?", username).First(&user).Error; err != nil {
+		return User{}, err
+	}
+
 	if username == "todo" && password == "aaa" {
 		return User{ID: 1, Role: "admin"}, nil
 	}
