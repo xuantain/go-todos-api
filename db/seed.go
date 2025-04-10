@@ -43,7 +43,7 @@ func seedUsers(db *gorm.DB) {
 				LastLogin: time.Now().Add(-2),
 				Active:    true,
 				UpdatedAt: time.Now().Add(-10),
-				Password:  "",
+				Password:  "1c6273d6de85cd160bb288efd115e34f43e67b1f4b1ab1b81a14343d050b48b4",
 			},
 			{
 				Name:      "Test User 2",
@@ -55,7 +55,7 @@ func seedUsers(db *gorm.DB) {
 				LastLogin: time.Now().Add(-2),
 				Active:    true,
 				UpdatedAt: time.Now().Add(-10),
-				Password:  "",
+				Password:  "1c6273d6de85cd160bb288efd115e34f43e67b1f4b1ab1b81a14343d050b48b4",
 			},
 			{
 				Name:      "Test User 13",
@@ -67,7 +67,7 @@ func seedUsers(db *gorm.DB) {
 				LastLogin: time.Now().Add(-2),
 				Active:    true,
 				UpdatedAt: time.Now().Add(-10),
-				Password:  "",
+				Password:  "1c6273d6de85cd160bb288efd115e34f43e67b1f4b1ab1b81a14343d050b48b4",
 			},
 		}
 

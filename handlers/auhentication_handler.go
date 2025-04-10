@@ -3,6 +3,7 @@ package handlers
 import (
 	"go-todos-api/db"
 	"go-todos-api/models"
+	"go-todos-api/pkg/helpers"
 	"net/http"
 	"strings"
 	"time"
@@ -40,12 +41,15 @@ func authenticateUser(username, password string) (User, error) {
 	var user models.User
 	db := db.Conn()
 
-	if err := db.Where("name = ?", username).First(&user).Error; err != nil {
+	if err := db.Where("username = ?", username).First(&user).Error; err != nil {
 		return User{}, err
 	}
 
-	if username == "todo" && password == "aaa" {
-		return User{ID: 1, Role: "admin"}, nil
+	hash1 := helpers.HashStr(password)
+
+	if strings.Compare(hash1, user.Password) == 0 {
+		// return user, nil
+		return User{ID: user.ID, Role: "admin"}, nil
 	}
 	return User{}, gin.Error{}
 }
