@@ -3,30 +3,11 @@ package middlewares
 import (
 	"strings"
 
-	"crypto/sha256"
-	"crypto/subtle"
-
 	"go-todos-api/config"
+	"go-todos-api/pkg/helpers"
 
 	"github.com/gin-gonic/gin"
 )
-
-func sha256Sum(s string) []byte {
-	sum := sha256.Sum256([]byte(s))
-	arr := make([]byte, len(sum))
-	copy(arr, sum[:])
-
-	return arr
-}
-
-// secureCompare calculates sha256 hash of parameters a and b and does constant time comparison
-// to avoid time based attacks.
-func secureCompare(a, b string) int {
-	aSum := sha256Sum(a)
-	bSum := sha256Sum(b)
-
-	return subtle.ConstantTimeCompare(aSum, bSum)
-}
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -43,8 +24,8 @@ func AuthMiddleware() gin.HandlerFunc {
 			c.AbortWithStatus(401)
 		}
 
-		isKeysEqual := secureCompare(key, reqKey) == 1
-		isSecretsEqual := secureCompare(secret, reqSecret) == 1
+		isKeysEqual := helpers.SecureCompare(key, reqKey) == 1
+		isSecretsEqual := helpers.SecureCompare(secret, reqSecret) == 1
 		if !isKeysEqual || !isSecretsEqual {
 			c.AbortWithStatus(401)
 			return
