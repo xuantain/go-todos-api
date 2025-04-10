@@ -2,9 +2,13 @@ package models
 
 import (
 	"go-todos-api/models"
+
+	"gorm.io/gorm"
 )
 
-type UserRepo struct{}
+type UserRepo struct {
+	*gorm.DB
+}
 
 var userList = GetUserListMockData()
 

@@ -1,6 +1,9 @@
 package models
 
-import "go-todos-api/models"
+import (
+	"go-todos-api/models"
+	"time"
+)
 
 func GetUserListMockData() []models.User {
 	return []models.User{
@@ -10,9 +13,9 @@ func GetUserListMockData() []models.User {
 			BirthDay:  "2000-01-01",
 			Gender:    "Male",
 			PhotoURL:  "",
-			Time:      "2025-03-03",
+			LastLogin: time.Now().Add(-2),
 			Active:    true,
-			UpdatedAt: "2025-04-01",
+			UpdatedAt: time.Now().Add(-10),
 		},
 		{
 			ID:        2,
@@ -20,9 +23,9 @@ func GetUserListMockData() []models.User {
 			BirthDay:  "2001-01-15",
 			Gender:    "Male",
 			PhotoURL:  "",
-			Time:      "2025-03-03",
+			LastLogin: time.Now().Add(-2),
 			Active:    true,
-			UpdatedAt: "2025-04-01",
+			UpdatedAt: time.Now().Add(-10),
 		},
 		{
 			ID:        3,
@@ -30,9 +33,9 @@ func GetUserListMockData() []models.User {
 			BirthDay:  "2002-03-02",
 			Gender:    "Male",
 			PhotoURL:  "",
-			Time:      "2025-03-03",
+			LastLogin: time.Now().Add(-2),
 			Active:    true,
-			UpdatedAt: "2025-04-01",
+			UpdatedAt: time.Now().Add(-10),
 		},
 	}
 }

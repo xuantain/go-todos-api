@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"go-todos-api/models"
-	repos "go-todos-api/models/repositories"
+	repos "go-todos-api/repositories"
 
 	"github.com/gin-gonic/gin"
 )
