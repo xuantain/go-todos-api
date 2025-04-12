@@ -1,4 +1,4 @@
-package models
+package repositories
 
 import (
 	"go-todos-api/models"
@@ -44,30 +44,30 @@ func GetTodoListMockData() []models.Todo {
 	return []models.Todo{
 		{
 			ID:          1,
-			UserName:    "todo",
+			Username:    "todo",
 			Description: "Learn AWS",
-			TargetDate:  "2025-06-15",
+			TargetDate:  time.Now().AddDate(0, 1, 5),
 			Done:        false,
 		},
 		{
 			ID:          2,
-			UserName:    "todo",
+			Username:    "todo",
 			Description: "Learn Azure",
-			TargetDate:  "2025-07-15",
+			TargetDate:  time.Now().AddDate(0, 2, 10),
 			Done:        false,
 		},
 		{
 			ID:          3,
-			UserName:    "todo",
+			Username:    "todo",
 			Description: "Learn DevOp",
-			TargetDate:  "2025-08-15",
+			TargetDate:  time.Now().AddDate(0, 3, 15),
 			Done:        false,
 		},
 		{
 			ID:          4,
-			UserName:    "todo",
+			Username:    "todo",
 			Description: "Learn Deno",
-			TargetDate:  "2025-09-15",
+			TargetDate:  time.Now().AddDate(0, 4, 22),
 			Done:        false,
 		},
 	}

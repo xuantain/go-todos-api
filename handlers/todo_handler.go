@@ -6,34 +6,40 @@ import (
 	"strconv"
 
 	"go-todos-api/models"
-	repos "go-todos-api/repositories"
+	"go-todos-api/repositories"
 
 	"github.com/gin-gonic/gin"
 )
 
-type TodoHandler struct{}
+type TodoHandler struct {
+	todoRepo repositories.TodoRepository
+}
 
-var todoRepo = new(repos.TodoRepo)
+func NewTodoHandler(todoRepo repositories.TodoRepository) *TodoHandler {
+	return &TodoHandler{todoRepo: todoRepo}
+}
 
-func (todo TodoHandler) GetAllTodos(c *gin.Context) {
+// var todoRepo = new(repositories.TodoRepository)
+
+func (h TodoHandler) GetAllUserTodos(c *gin.Context) {
+
 	if username := c.Param("username"); username != "" {
-		todoList := todoRepo.GetAllTodos()
 
-		userTodoList := []models.Todo{}
+		todoList, err := h.todoRepo.ListByUsername(c.Request.Context(), username, 0, 10)
+		fmt.Println("GetAllUserTodos >>> todoList >>>", todoList)
 
-		for _, item := range todoList {
-			if item.UserName == username {
-				userTodoList = append(userTodoList, item)
-			}
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
 		}
 
-		c.JSON(http.StatusOK, userTodoList)
+		c.JSON(http.StatusOK, todoList)
 		return
 	}
 	c.Abort()
 }
 
-func (todo TodoHandler) CreateTodo(c *gin.Context) {
+func (h TodoHandler) CreateTodo(c *gin.Context) {
 	newTodo := models.Todo{}
 
 	if err := c.ShouldBindJSON(&newTodo); err != nil {
@@ -41,7 +47,7 @@ func (todo TodoHandler) CreateTodo(c *gin.Context) {
 		return
 	}
 
-	if !todoRepo.InsertNewTodo(newTodo) {
+	if err := h.todoRepo.Create(c.Request.Context(), &newTodo); err != nil {
 		c.JSON(http.StatusNotAcceptable, gin.H{"error": "Invalid request"})
 		return
 	}
@@ -49,10 +55,15 @@ func (todo TodoHandler) CreateTodo(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"todo": newTodo})
 }
 
-func (u TodoHandler) UpdateTodo(c *gin.Context) {
+func (h TodoHandler) UpdateTodo(c *gin.Context) {
+
 	if c.Param("id") != "" {
 
-		todoId, _ := strconv.Atoi(c.Param("id"))
+		u64, err := strconv.ParseUint(c.Param("id"), 10, 32)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"message": "bad request"})
+		}
+		todoId := uint(u64)
 		updatedTodo := models.Todo{}
 
 		if err := c.ShouldBindJSON(&updatedTodo); err != nil {
@@ -61,7 +72,7 @@ func (u TodoHandler) UpdateTodo(c *gin.Context) {
 		}
 
 		updatedTodo.ID = todoId
-		if !todoRepo.UpdateTodo(updatedTodo) {
+		if err := h.todoRepo.Update(c.Request.Context(), &updatedTodo); err != nil {
 			c.JSON(http.StatusNotAcceptable, gin.H{"error": "Cannot update"})
 			return
 		}
@@ -74,14 +85,18 @@ func (u TodoHandler) UpdateTodo(c *gin.Context) {
 	c.Abort()
 }
 
-func (u TodoHandler) Retrieve(c *gin.Context) {
+func (h TodoHandler) Retrieve(c *gin.Context) {
 
 	if c.Param("id") != "" {
 
-		todoId, _ := strconv.Atoi(c.Param("id"))
-		todo, isExist := todoRepo.GetByID(todoId)
+		u64, err := strconv.ParseUint(c.Param("id"), 10, 32)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"message": "bad request"})
+		}
+		todoId := uint(u64)
+		todo, err := h.todoRepo.FindByID(c.Request.Context(), todoId)
 
-		if !isExist {
+		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("Todo {%d} does not exist", todoId)})
 			c.Abort()
 			return
@@ -95,13 +110,17 @@ func (u TodoHandler) Retrieve(c *gin.Context) {
 	c.Abort()
 }
 
-func (u TodoHandler) DeleteTodo(c *gin.Context) {
+func (h TodoHandler) DeleteTodo(c *gin.Context) {
+
 	if c.Param("id") != "" {
 
-		todoId, _ := strconv.Atoi(c.Param("id"))
-		isGone := todoRepo.DeleteTodo(todoId)
+		u64, err := strconv.ParseUint(c.Param("id"), 10, 32)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"message": "bad request"})
+		}
+		todoId := uint(u64)
 
-		if !isGone {
+		if err := h.todoRepo.Delete(c.Request.Context(), todoId); err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("Cannot delete Todo {%d}", todoId)})
 			c.Abort()
 			return

@@ -7,7 +7,6 @@ import (
 )
 
 type User struct {
-	gorm.Model
 	ID        uint      `json:"id" gorm:"primary_key"`
 	Username  string    `json:"username" gorm:"size:30;not null"`
 	Name      string    `json:"name" gorm:"size:255;not null"`
@@ -24,4 +23,10 @@ type User struct {
 // Note: Use this func to override the default table-name
 func (User) TableName() string {
 	return "users"
+}
+
+// Note: Create Scope for Query
+// Usage: repo.db.Scopes(ActiveUsers).Find(&users)
+func ActiveUsers(db *gorm.DB) *gorm.DB {
+	return db.Where("active = ?", true)
 }
