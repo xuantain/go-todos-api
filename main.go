@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	router "go-todos-api/api/swagger"
+	router "go-todos-api/api"
 	"go-todos-api/config"
 	"go-todos-api/dependencies"
 )
