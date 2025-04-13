@@ -1,6 +1,9 @@
-package models
+package repositories
 
-import "go-todos-api/models"
+import (
+	"go-todos-api/models"
+	"time"
+)
 
 func GetUserListMockData() []models.User {
 	return []models.User{
@@ -10,9 +13,9 @@ func GetUserListMockData() []models.User {
 			BirthDay:  "2000-01-01",
 			Gender:    "Male",
 			PhotoURL:  "",
-			Time:      "2025-03-03",
+			LastLogin: time.Now().Add(-2),
 			Active:    true,
-			UpdatedAt: "2025-04-01",
+			UpdatedAt: time.Now().Add(-10),
 		},
 		{
 			ID:        2,
@@ -20,9 +23,9 @@ func GetUserListMockData() []models.User {
 			BirthDay:  "2001-01-15",
 			Gender:    "Male",
 			PhotoURL:  "",
-			Time:      "2025-03-03",
+			LastLogin: time.Now().Add(-2),
 			Active:    true,
-			UpdatedAt: "2025-04-01",
+			UpdatedAt: time.Now().Add(-10),
 		},
 		{
 			ID:        3,
@@ -30,9 +33,9 @@ func GetUserListMockData() []models.User {
 			BirthDay:  "2002-03-02",
 			Gender:    "Male",
 			PhotoURL:  "",
-			Time:      "2025-03-03",
+			LastLogin: time.Now().Add(-2),
 			Active:    true,
-			UpdatedAt: "2025-04-01",
+			UpdatedAt: time.Now().Add(-10),
 		},
 	}
 }
@@ -41,30 +44,30 @@ func GetTodoListMockData() []models.Todo {
 	return []models.Todo{
 		{
 			ID:          1,
-			UserName:    "todo",
+			Username:    "todo",
 			Description: "Learn AWS",
-			TargetDate:  "2025-06-15",
+			TargetDate:  time.Now().AddDate(0, 1, 5),
 			Done:        false,
 		},
 		{
 			ID:          2,
-			UserName:    "todo",
+			Username:    "todo",
 			Description: "Learn Azure",
-			TargetDate:  "2025-07-15",
+			TargetDate:  time.Now().AddDate(0, 2, 10),
 			Done:        false,
 		},
 		{
 			ID:          3,
-			UserName:    "todo",
+			Username:    "todo",
 			Description: "Learn DevOp",
-			TargetDate:  "2025-08-15",
+			TargetDate:  time.Now().AddDate(0, 3, 15),
 			Done:        false,
 		},
 		{
 			ID:          4,
-			UserName:    "todo",
+			Username:    "todo",
 			Description: "Learn Deno",
-			TargetDate:  "2025-09-15",
+			TargetDate:  time.Now().AddDate(0, 4, 22),
 			Done:        false,
 		},
 	}

@@ -1,6 +1,9 @@
 package handlers
 
 import (
+	"context"
+	"go-todos-api/pkg/helpers"
+	"go-todos-api/repositories"
 	"net/http"
 	"strings"
 	"time"
@@ -9,11 +12,12 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-type AuthenticationHandler struct{}
+type AuthenticationHandler struct {
+	userRepo repositories.UserRepository
+}
 
-func (auth AuthenticationHandler) CheckBasicAuth(c *gin.Context) {
-	user := c.MustGet(gin.AuthUserKey).(string)
-	c.JSON(http.StatusOK, gin.H{"user": user, "message": "Welcome back!"})
+func NewAuthenticationHandler(userRepo repositories.UserRepository) *AuthenticationHandler {
+	return &AuthenticationHandler{userRepo: userRepo}
 }
 
 var (
@@ -31,14 +35,6 @@ type Claims struct {
 type User struct {
 	ID   uint   `json:"id"`
 	Role string `json:"role"`
-}
-
-func authenticateUser(username, password string) (User, error) {
-	// todo: This should be handled by DB layer
-	if username == "todo" && password == "aaa" {
-		return User{ID: 1, Role: "admin"}, nil
-	}
-	return User{}, gin.Error{}
 }
 
 func GenerateToken(userID uint, role string) (string, error) {
@@ -59,6 +55,11 @@ func GenerateToken(userID uint, role string) (string, error) {
 	return token.SignedString(JWTSecretKey)
 }
 
+func (auth AuthenticationHandler) CheckBasicAuth(c *gin.Context) {
+	username := c.MustGet(gin.AuthUserKey).(string)
+	c.JSON(http.StatusOK, gin.H{"user": username, "message": "Welcome back!"})
+}
+
 func (auth AuthenticationHandler) Login(c *gin.Context) {
 	type LoginRequest struct {
 		Username string `json:"username" binding:"required"`
@@ -71,15 +72,26 @@ func (auth AuthenticationHandler) Login(c *gin.Context) {
 		return
 	}
 
-	// Authenticate user (implement your own logic)
-	user, err := authenticateUser(req.Username, req.Password)
+	user, err := auth.userRepo.FindByUsername(context.Background(), req.Username)
+
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid username or credentials"})
 		return
 	}
 
+	hash1 := helpers.HashStr(req.Password)
+
+	// Todo: Should have a table to store user's token and recheck if it is expired
+	// If it is not expired yet => allow access apis
+	// If not => require authenticate
+	if strings.Compare(hash1, user.Password) != 0 {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid username or credentials"})
+		return
+	}
+
+	// Todo: Should get user's roles from DB => Create another userRoles & groupRoles & etc
 	// Generate token
-	token, err := GenerateToken(user.ID, user.Role)
+	token, err := GenerateToken(user.ID, "admin")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		return

@@ -3,56 +3,87 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"go-todos-api/models"
-	repos "go-todos-api/models/repositories"
+	"go-todos-api/repositories"
 
 	"github.com/gin-gonic/gin"
 )
 
-type UserHandler struct{}
+type UserHandler struct {
+	userRepo repositories.UserRepository
+}
 
-var userRepo = new(repos.UserRepo)
+func NewUserHandler(userRepo repositories.UserRepository) *UserHandler {
+	return &UserHandler{userRepo: userRepo}
+}
 
-func (u UserHandler) GetAllUsers(c *gin.Context) {
-	userList := userRepo.GetAllUsers()
+func (u *UserHandler) GetAllUsers(c *gin.Context) {
+
+	userList, err := u.userRepo.List(c.Request.Context(), 0, 10)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{"data": userList})
 	c.Abort()
 }
 
-func (u UserHandler) CreateUser(c *gin.Context) {
+func (u *UserHandler) CreateUser(c *gin.Context) {
 
 	var newUser models.User
 
 	// Call BindJSON to bind the received JSON to newUser
 	if err := c.BindJSON(&newUser); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	newUser = userRepo.InsertNewUser(newUser)
+	if err := u.userRepo.Create(c.Request.Context(), &newUser); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// newUser = repo.InsertNewUser(newUser)
 
 	c.JSON(http.StatusCreated, newUser)
 	c.Abort()
 }
 
-func (u UserHandler) UpdateUser(c *gin.Context) {
+func (u *UserHandler) UpdateUser(c *gin.Context) {
 
 	newUser := models.User{}
+
+	// Call BindJSON to bind the received JSON to newUser
+	if err := c.ShouldBindJSON(&newUser); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := u.userRepo.Update(c.Request.Context(), &newUser); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	c.JSON(http.StatusAccepted, gin.H{"data": newUser})
 	c.Abort()
 }
 
-func (u UserHandler) Retrieve(c *gin.Context) {
+func (u *UserHandler) Retrieve(c *gin.Context) {
 
 	if c.Param("id") != "" {
 
-		userId := c.GetInt("id")
-		user := userRepo.GetByID(userId)
-		fmt.Println(user)
+		u64, err := strconv.ParseUint(c.Param("id"), 10, 32)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"message": "bad request"})
+		}
+		userId := uint(u64)
 
-		if user != nil {
+		user, err := u.userRepo.FindByID(c.Request.Context(), userId)
+		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": "Error to retrieve user", "error": nil})
 			c.Abort()
 			return
@@ -66,10 +97,16 @@ func (u UserHandler) Retrieve(c *gin.Context) {
 	c.Abort() // to stop current handler and ignore calling remaining handlers
 }
 
-func (u UserHandler) DeleteUser(c *gin.Context) {
+func (u *UserHandler) DeleteUser(c *gin.Context) {
 
-	if c.Param("id") != "" {
-		c.JSON(http.StatusGone, gin.H{"message": "Deleted user id:" + c.Param("id")})
+	userId := c.GetUint("id")
+	if userId != 0 {
+		c.JSON(http.StatusGone, gin.H{"message": fmt.Sprintf("Deleted user id:%d", userId)})
+		return
+	}
+
+	if err := u.userRepo.Delete(c.Request.Context(), userId); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
