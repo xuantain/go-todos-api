@@ -7,7 +7,7 @@ import (
 )
 
 type Todo struct {
-	ID          uint      `json:"id" gorm:"primary_key"`
+	ID          uint      `json:"id,string" gorm:"primary_key"`
 	Username    string    `json:"username" gorm:"size:30;not null"`
 	Description string    `json:"description" gorm:"size:255;not null"`
 	TargetDate  time.Time `json:"targetDate" gorm:"autoCreateTime:false"`

@@ -26,7 +26,6 @@ func (h TodoHandler) GetAllUserTodos(c *gin.Context) {
 	if username := c.Param("username"); username != "" {
 
 		todoList, err := h.todoRepo.ListByUsername(c.Request.Context(), username, 0, 10)
-		fmt.Println("GetAllUserTodos >>> todoList >>>", todoList)
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -43,12 +42,12 @@ func (h TodoHandler) CreateTodo(c *gin.Context) {
 	newTodo := models.Todo{}
 
 	if err := c.ShouldBindJSON(&newTodo); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	if err := h.todoRepo.Create(c.Request.Context(), &newTodo); err != nil {
-		c.JSON(http.StatusNotAcceptable, gin.H{"error": "Invalid request"})
+		c.JSON(http.StatusNotAcceptable, gin.H{"error": err.Error()})
 		return
 	}
 

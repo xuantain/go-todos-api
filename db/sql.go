@@ -38,7 +38,6 @@ func connectSqlDB() *gorm.DB {
 	var err error
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=true&loc=Local",
 		dbUser, dbPass, dbHost, dbPort, dbName)
-	fmt.Println(dsn)
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 

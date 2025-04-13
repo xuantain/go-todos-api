@@ -3,7 +3,6 @@ package repositories
 import (
 	"context"
 	"errors"
-	"fmt"
 	"go-todos-api/models"
 
 	"gorm.io/gorm"
@@ -67,7 +66,6 @@ func (r *TodoRepository) Create(ctx context.Context, todo *models.Todo) error {
 func (r *TodoRepository) FindByID(ctx context.Context, id uint) (*models.Todo, error) {
 	var todo models.Todo
 	err := r.db.WithContext(ctx).First(&todo, id).Error
-	fmt.Println("todo >>>", todo)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, nil
 	}
