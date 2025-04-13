@@ -57,6 +57,13 @@ func (auth AuthenticationHandler) CheckBasicAuth(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"user": username, "message": "Welcome back!"})
 }
 
+// Authenticate		godoc
+// @Summary			Authenticate to get JWT token
+// @Description		Responds with the JWT token".
+// @Tags			authentication
+// @Produce			json
+// @Success			200  {text}  string
+// @Router			/authenticate [post]
 func (auth AuthenticationHandler) Login(c *gin.Context) {
 	fmt.Println(">>> Call Login")
 	type LoginRequest struct {

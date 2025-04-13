@@ -4,15 +4,31 @@ import (
 	"fmt"
 	"net/http"
 
+	_ "go-todos-api/docs"
+
 	"github.com/gin-gonic/gin"
 )
 
 type HelloWorldHandler struct{}
 
+// HelloWorld		godoc
+// @Summary			Say "Hello World!"
+// @Description		Responds with the greeting word "Hello World!".
+// @Tags			hello
+// @Produce			json
+// @Success			200  {text}  string
+// @Router			/hello-world [get]
 func (u HelloWorldHandler) SayHelloWorld(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Hello World!"})
 }
 
+// HelloWorldBean	godoc
+// @Summary			Say "Hello World! to {username}"
+// @Description		Responds with the greeting word "Hello World! to {username}".
+// @Tags			hello
+// @Produce			json
+// @Success			200  {text}  string
+// @Router			/hello-world-bean/path-variable/:username [get]
 func (u HelloWorldHandler) SayHelloWorldTo(c *gin.Context) {
 	if c.Param("username") != "" {
 		username := c.Param("username")

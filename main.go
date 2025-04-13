@@ -8,8 +8,14 @@ import (
 	router "go-todos-api/api"
 	"go-todos-api/config"
 	"go-todos-api/dependencies"
+	_ "go-todos-api/docs"
 )
 
+// @title			Gingo Todos API
+// @version			1.0
+// @description		A todo management service API in Go using Gin framework.
+// @host			localhost
+// @BasePath		/api/
 func main() {
 
 	// todo: Use .env instead?

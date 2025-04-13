@@ -15,6 +15,13 @@ type UserHandler struct {
 	UserRepo repositories.UserRepository
 }
 
+// Users			godoc
+// @Summary			Get all users
+// @Description		Responds with the list of users".
+// @Tags			users
+// @Produce			json
+// @Success			200  {array}  []models.User
+// @Router			/api/users [get]
 func (u *UserHandler) GetAllUsers(c *gin.Context) {
 
 	userList, err := u.UserRepo.List(c.Request.Context(), 0, 10)
@@ -28,6 +35,13 @@ func (u *UserHandler) GetAllUsers(c *gin.Context) {
 	c.Abort()
 }
 
+// Users			godoc
+// @Summary			Create a new user
+// @Description		Responds with the new user".
+// @Tags			users
+// @Produce			json
+// @Success			200  {object}  models.User
+// @Router			/api/users [post]
 func (u *UserHandler) CreateUser(c *gin.Context) {
 
 	var newUser models.User
