@@ -12,16 +12,12 @@ import (
 )
 
 type UserHandler struct {
-	userRepo repositories.UserRepository
-}
-
-func NewUserHandler(userRepo repositories.UserRepository) *UserHandler {
-	return &UserHandler{userRepo: userRepo}
+	UserRepo repositories.UserRepository
 }
 
 func (u *UserHandler) GetAllUsers(c *gin.Context) {
 
-	userList, err := u.userRepo.List(c.Request.Context(), 0, 10)
+	userList, err := u.UserRepo.List(c.Request.Context(), 0, 10)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -42,7 +38,7 @@ func (u *UserHandler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	if err := u.userRepo.Create(c.Request.Context(), &newUser); err != nil {
+	if err := u.UserRepo.Create(c.Request.Context(), &newUser); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -63,7 +59,7 @@ func (u *UserHandler) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	if err := u.userRepo.Update(c.Request.Context(), &newUser); err != nil {
+	if err := u.UserRepo.Update(c.Request.Context(), &newUser); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -82,7 +78,7 @@ func (u *UserHandler) Retrieve(c *gin.Context) {
 		}
 		userId := uint(u64)
 
-		user, err := u.userRepo.FindByID(c.Request.Context(), userId)
+		user, err := u.UserRepo.FindByID(c.Request.Context(), userId)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": "Error to retrieve user", "error": nil})
 			c.Abort()
@@ -105,7 +101,7 @@ func (u *UserHandler) DeleteUser(c *gin.Context) {
 		return
 	}
 
-	if err := u.userRepo.Delete(c.Request.Context(), userId); err != nil {
+	if err := u.UserRepo.Delete(c.Request.Context(), userId); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

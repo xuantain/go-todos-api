@@ -12,11 +12,7 @@ import (
 )
 
 type TodoHandler struct {
-	todoRepo repositories.TodoRepository
-}
-
-func NewTodoHandler(todoRepo repositories.TodoRepository) *TodoHandler {
-	return &TodoHandler{todoRepo: todoRepo}
+	TodoRepo repositories.TodoRepository
 }
 
 // var todoRepo = new(repositories.TodoRepository)
@@ -25,7 +21,7 @@ func (h TodoHandler) GetAllUserTodos(c *gin.Context) {
 
 	if username := c.Param("username"); username != "" {
 
-		todoList, err := h.todoRepo.ListByUsername(c.Request.Context(), username, 0, 10)
+		todoList, err := h.TodoRepo.ListByUsername(c.Request.Context(), username, 0, 10)
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -46,7 +42,7 @@ func (h TodoHandler) CreateTodo(c *gin.Context) {
 		return
 	}
 
-	if err := h.todoRepo.Create(c.Request.Context(), &newTodo); err != nil {
+	if err := h.TodoRepo.Create(c.Request.Context(), &newTodo); err != nil {
 		c.JSON(http.StatusNotAcceptable, gin.H{"error": err.Error()})
 		return
 	}
@@ -71,7 +67,7 @@ func (h TodoHandler) UpdateTodo(c *gin.Context) {
 		}
 
 		updatedTodo.ID = todoId
-		if err := h.todoRepo.Update(c.Request.Context(), &updatedTodo); err != nil {
+		if err := h.TodoRepo.Update(c.Request.Context(), &updatedTodo); err != nil {
 			c.JSON(http.StatusNotAcceptable, gin.H{"error": "Cannot update"})
 			return
 		}
@@ -93,7 +89,7 @@ func (h TodoHandler) Retrieve(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{"message": "bad request"})
 		}
 		todoId := uint(u64)
-		todo, err := h.todoRepo.FindByID(c.Request.Context(), todoId)
+		todo, err := h.TodoRepo.FindByID(c.Request.Context(), todoId)
 
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("Todo {%d} does not exist", todoId)})
@@ -119,7 +115,7 @@ func (h TodoHandler) DeleteTodo(c *gin.Context) {
 		}
 		todoId := uint(u64)
 
-		if err := h.todoRepo.Delete(c.Request.Context(), todoId); err != nil {
+		if err := h.TodoRepo.Delete(c.Request.Context(), todoId); err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("Cannot delete Todo {%d}", todoId)})
 			c.Abort()
 			return

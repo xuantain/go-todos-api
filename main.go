@@ -5,10 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	api "go-todos-api/api/swagger"
+	router "go-todos-api/api/swagger"
 	"go-todos-api/config"
-	"go-todos-api/db"
-	"go-todos-api/repositories"
+	"go-todos-api/dependencies"
 )
 
 func main() {
@@ -23,23 +22,22 @@ func main() {
 	}
 	flag.Parse()
 
+	// Get configs from *.yml files
 	config.Init(*environment)
-	config := config.GetConfig()
+	configs := config.GetConfig()
 
-	database := db.InitDb()
-	db.SeedDB(database)
-	repo := repositories.NewRepository(database)
+	// Init appConfig
+	config.InitApp()
 
-	server := api.SetupRoutes(repo)
+	// Load inner dependencies
+	deps := dependencies.Init()
 
-	// server.Use(middlewares.AuthMiddleware())
-	// server.Use(middlewares.JwtAuthMiddleware())
-	// server.Use(middlewares.CORSMiddleware())
+	// Setup routes
+	server := router.SetupRoutes(deps)
 
-	address := config.GetString("server.address")
-	port := config.GetString("server.port")
-
+	// Start web-service
+	address := configs.GetString("server.address")
+	port := configs.GetString("server.port")
 	url := address + ":" + port
-
 	server.Run(url)
 }

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"go-todos-api/pkg/helpers"
 	"go-todos-api/repositories"
 	"net/http"
@@ -13,11 +14,7 @@ import (
 )
 
 type AuthenticationHandler struct {
-	userRepo repositories.UserRepository
-}
-
-func NewAuthenticationHandler(userRepo repositories.UserRepository) *AuthenticationHandler {
-	return &AuthenticationHandler{userRepo: userRepo}
+	UserRepo repositories.UserRepository
 }
 
 var (
@@ -61,6 +58,7 @@ func (auth AuthenticationHandler) CheckBasicAuth(c *gin.Context) {
 }
 
 func (auth AuthenticationHandler) Login(c *gin.Context) {
+	fmt.Println(">>> Call Login")
 	type LoginRequest struct {
 		Username string `json:"username" binding:"required"`
 		Password string `json:"password" binding:"required"`
@@ -72,7 +70,7 @@ func (auth AuthenticationHandler) Login(c *gin.Context) {
 		return
 	}
 
-	user, err := auth.userRepo.FindByUsername(context.Background(), req.Username)
+	user, err := auth.UserRepo.FindByUsername(context.Background(), req.Username)
 
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid username or credentials"})

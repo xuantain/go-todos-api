@@ -16,6 +16,7 @@ type Connection struct {
 var Db *gorm.DB
 
 func InitDb() *gorm.DB {
+	fmt.Println("InitApp >>")
 
 	Db = connectSqlDB()
 
@@ -28,6 +29,7 @@ func InitDb() *gorm.DB {
 }
 
 func connectSqlDB() *gorm.DB {
+	fmt.Println("InitApp >> connectSqlDB()")
 
 	dbUser := os.Getenv("DB_USER")
 	dbPass := os.Getenv("DB_PASSWORD")
