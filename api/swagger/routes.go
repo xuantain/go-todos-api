@@ -1,29 +1,28 @@
 package api
 
 import (
-	"go-todos-api/handlers"
+	"go-todos-api/dependencies"
 	"go-todos-api/middlewares"
-	"go-todos-api/repositories"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRoutes(repo *repositories.Repository) *gin.Engine {
+func SetupRoutes(deps *dependencies.Dependencies) *gin.Engine {
 
 	r := gin.Default()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 
 	// Hello World Apis
-	helloWorldHandler := new(handlers.HelloWorldHandler)
+	helloWorldHandler := deps.HelloHandler
 
 	// Public routes
 	r.GET("/hello-world", helloWorldHandler.SayHelloWorld)
 	r.GET("/hello-world-bean/path-variable/:username", helloWorldHandler.SayHelloWorldTo)
 
 	// Authentication
-	authHandler := handlers.NewAuthenticationHandler(repo.User)
+	authHandler := deps.AuthHandler
 
 	// Note: Basic Authentication
 	// authoried := r.Group("/", BasicAuthMiddleware)
@@ -60,7 +59,7 @@ func SetupRoutes(repo *repositories.Repository) *gin.Engine {
 	// User Apis
 	userRoutes := authoried.Group("/")
 	{
-		userHandler := handlers.NewUserHandler(repo.User)
+		userHandler := deps.UserHandler
 
 		r.GET("/users", userHandler.GetAllUsers)
 		userRoutes.POST("/", userHandler.CreateUser)
@@ -72,7 +71,7 @@ func SetupRoutes(repo *repositories.Repository) *gin.Engine {
 	// Todo Apis
 	todoRoutes := authoried.Group("/users")
 	{
-		todoHandler := handlers.NewTodoHandler(repo.Todo)
+		todoHandler := deps.TodoHandler
 		todoRoutes.GET("/:username/todos", todoHandler.GetAllUserTodos)
 		todoRoutes.POST("/:username/todos", todoHandler.CreateTodo)
 		todoRoutes.GET("/:username/todos/:id", todoHandler.Retrieve)
