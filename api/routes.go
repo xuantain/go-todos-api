@@ -67,10 +67,10 @@ func SetupRoutes(deps *dependencies.Dependencies) *gin.Engine {
 		userHandler := deps.UserHandler
 
 		userRoutes.GET("/users", userHandler.GetAllUsers)
-		userRoutes.POST("/", userHandler.CreateUser)
-		userRoutes.GET("/:id", userHandler.Retrieve)
-		userRoutes.PUT("/:id", userHandler.UpdateUser)
-		userRoutes.DELETE("/:id", userHandler.DeleteUser)
+		userRoutes.POST("/users", userHandler.CreateUser)
+		userRoutes.GET("/users/:id", userHandler.Retrieve)
+		userRoutes.PUT("/users/:id", userHandler.UpdateUser)
+		userRoutes.DELETE("/users/:id", userHandler.DeleteUser)
 	}
 
 	/** Todo APIs */

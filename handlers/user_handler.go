@@ -17,7 +17,7 @@ type UserHandler struct {
 
 // Users			godoc
 // @Summary			Get all users
-// @Description		Responds with the list of users".
+// @Description		Responds with the list of users
 // @Tags			users
 // @Produce			json
 // @Success			200  {array}  []models.User
@@ -31,16 +31,16 @@ func (u *UserHandler) GetAllUsers(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": userList})
+	c.JSON(http.StatusOK, userList)
 	c.Abort()
 }
 
 // Users			godoc
 // @Summary			Create a new user
-// @Description		Responds with the new user".
+// @Description		Responds with the new user
 // @Tags			users
 // @Produce			json
-// @Success			200  {object}  models.User
+// @Success			201  {object}  models.User
 // @Router			/api/users [post]
 func (u *UserHandler) CreateUser(c *gin.Context) {
 
@@ -63,6 +63,13 @@ func (u *UserHandler) CreateUser(c *gin.Context) {
 	c.Abort()
 }
 
+// Users			godoc
+// @Summary			Update an existed user
+// @Description		Responds with the updated user
+// @Tags			users
+// @Produce			json
+// @Success			202  {object}  models.User
+// @Router			/api/users/:id [put]
 func (u *UserHandler) UpdateUser(c *gin.Context) {
 
 	newUser := models.User{}
@@ -78,10 +85,17 @@ func (u *UserHandler) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusAccepted, gin.H{"data": newUser})
+	c.JSON(http.StatusAccepted, newUser)
 	c.Abort()
 }
 
+// Users			godoc
+// @Summary			Retreive an user
+// @Description		Responds with the user
+// @Tags			users
+// @Produce			json
+// @Success			302  {object}  models.User
+// @Router			/api/users/:id [get]
 func (u *UserHandler) Retrieve(c *gin.Context) {
 
 	if c.Param("id") != "" {
@@ -99,7 +113,8 @@ func (u *UserHandler) Retrieve(c *gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusFound, gin.H{"message": "User founded!", "user": user})
+		// User founded!
+		c.JSON(http.StatusFound, user)
 		return
 	}
 
@@ -107,16 +122,30 @@ func (u *UserHandler) Retrieve(c *gin.Context) {
 	c.Abort() // to stop current handler and ignore calling remaining handlers
 }
 
+// Users			godoc
+// @Summary			Delete an user
+// @Description		Responds with the message
+// @Tags			users
+// @Produce			json
+// @Success			410  {json}  { 'message': 'Deleted user id:%d' }
+// @Router			/api/users/:id [delete]
 func (u *UserHandler) DeleteUser(c *gin.Context) {
 
-	userId := c.GetUint("id")
-	if userId != 0 {
-		c.JSON(http.StatusGone, gin.H{"message": fmt.Sprintf("Deleted user id:%d", userId)})
-		return
-	}
+	if c.Param("id") != "" {
 
-	if err := u.UserRepo.Delete(c.Request.Context(), userId); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		u64, err := strconv.ParseUint(c.Param("id"), 10, 32)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"message": "bad request"})
+		}
+		userId := uint(u64)
+
+		if err := u.UserRepo.Delete(c.Request.Context(), userId); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.Abort()
+			return
+		}
+
+		c.JSON(http.StatusGone, gin.H{"message": fmt.Sprintf("Deleted user id:%d", userId)})
 		return
 	}
 
