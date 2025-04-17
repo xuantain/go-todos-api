@@ -17,6 +17,13 @@ type TodoHandler struct {
 
 // var todoRepo = new(repositories.TodoRepository)
 
+// Todos			godoc
+// @Summary			Get all todos
+// @Description		Responds with the list of todos
+// @Tags			todos
+// @Produce			json
+// @Success			200  {array}  []models.Todo
+// @Router			/api/users/:username/todos/:id [get]
 func (h TodoHandler) GetAllUserTodos(c *gin.Context) {
 
 	if username := c.Param("username"); username != "" {
@@ -34,6 +41,13 @@ func (h TodoHandler) GetAllUserTodos(c *gin.Context) {
 	c.Abort()
 }
 
+// Todos			godoc
+// @Summary			Create a new todo
+// @Description		Responds with the new todo
+// @Tags			todos
+// @Produce			json
+// @Success			201  {json}  { 'todo': models.Todo }
+// @Router			/api/users/:username/todos [post]
 func (h TodoHandler) CreateTodo(c *gin.Context) {
 	newTodo := models.Todo{}
 
@@ -50,6 +64,13 @@ func (h TodoHandler) CreateTodo(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"todo": newTodo})
 }
 
+// Todos			godoc
+// @Summary			Update an existed todo
+// @Description		Responds with the updated todo
+// @Tags			todos
+// @Produce			json
+// @Success			202  {json}  { 'todo': models.Todo }
+// @Router			/api/users/:username/todos/:id [put]
 func (h TodoHandler) UpdateTodo(c *gin.Context) {
 
 	if c.Param("id") != "" {
@@ -80,6 +101,13 @@ func (h TodoHandler) UpdateTodo(c *gin.Context) {
 	c.Abort()
 }
 
+// Todos			godoc
+// @Summary			Retreive a todo
+// @Description		Responds with the todo
+// @Tags			todos
+// @Produce			json
+// @Success			302  {object}  models.Todo
+// @Router			/api/users/:username/todos/:id [get]
 func (h TodoHandler) Retrieve(c *gin.Context) {
 
 	if c.Param("id") != "" {
@@ -105,6 +133,13 @@ func (h TodoHandler) Retrieve(c *gin.Context) {
 	c.Abort()
 }
 
+// Todos			godoc
+// @Summary			Delete a todo
+// @Description		Responds with the message
+// @Tags			todos
+// @Produce			json
+// @Success			410  {json}  { 'message': 'Deleted todo id:%d' }
+// @Router			/api/users/:username/todos/:id [delete]
 func (h TodoHandler) DeleteTodo(c *gin.Context) {
 
 	if c.Param("id") != "" {

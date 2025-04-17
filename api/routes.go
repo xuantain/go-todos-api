@@ -6,6 +6,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func SetupRoutes(deps *dependencies.Dependencies) *gin.Engine {
@@ -14,10 +16,13 @@ func SetupRoutes(deps *dependencies.Dependencies) *gin.Engine {
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 
+	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	// Hello World Apis
 	helloWorldHandler := deps.HelloHandler
 
-	// Public routes
+	/** Public routes */
+
 	r.GET("/hello-world", helloWorldHandler.SayHelloWorld)
 	r.GET("/hello-world-bean/path-variable/:username", helloWorldHandler.SayHelloWorldTo)
 
@@ -56,19 +61,19 @@ func SetupRoutes(deps *dependencies.Dependencies) *gin.Engine {
 	// 	}
 	// }
 
-	// User Apis
+	/** User APIs */
 	userRoutes := authoried.Group("/")
 	{
 		userHandler := deps.UserHandler
 
-		r.GET("/users", userHandler.GetAllUsers)
-		userRoutes.POST("/", userHandler.CreateUser)
-		userRoutes.GET("/:id", userHandler.Retrieve)
-		userRoutes.PUT("/:id", userHandler.UpdateUser)
-		userRoutes.DELETE("/:id", userHandler.DeleteUser)
+		userRoutes.GET("/users", userHandler.GetAllUsers)
+		userRoutes.POST("/users", userHandler.CreateUser)
+		userRoutes.GET("/users/:id", userHandler.Retrieve)
+		userRoutes.PUT("/users/:id", userHandler.UpdateUser)
+		userRoutes.DELETE("/users/:id", userHandler.DeleteUser)
 	}
 
-	// Todo Apis
+	/** Todo APIs */
 	todoRoutes := authoried.Group("/users")
 	{
 		todoHandler := deps.TodoHandler

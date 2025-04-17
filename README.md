@@ -14,3 +14,8 @@ go vet          -  Detects common mistakes and potential issues in the code.
 pprof           -  A profiling tool for performance analysis.
 golangci-lint   -  Linting tool for golang code
 ```
+
+## Swagger
+- Generate swagger docs every time you modify doc string.
+> swag init
+- Re-run the server.

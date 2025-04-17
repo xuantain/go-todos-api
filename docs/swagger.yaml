@@ -1,0 +1,202 @@
+basePath: /api/
+definitions:
+  models.Todo:
+    properties:
+      description:
+        type: string
+      done:
+        type: boolean
+      id:
+        example: "0"
+        type: string
+      targetDate:
+        type: string
+      username:
+        type: string
+    type: object
+  models.User:
+    properties:
+      active:
+        type: boolean
+      birthday:
+        type: string
+      email:
+        type: string
+      gender:
+        type: string
+      id:
+        type: integer
+      lastLogin:
+        type: string
+      name:
+        type: string
+      photoUrl:
+        type: string
+      updatedAt:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost
+info:
+  contact: {}
+  description: A todo management service API in Go using Gin framework.
+  title: Gingo Todos API
+  version: "1.0"
+paths:
+  /api/users:
+    get:
+      description: Responds with the list of users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/models.User'
+              type: array
+            type: array
+      summary: Get all users
+      tags:
+      - users
+    post:
+      description: Responds with the new user
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: Create a new user
+      tags:
+      - users
+  /api/users/:id:
+    delete:
+      description: Responds with the message
+      produces:
+      - application/json
+      responses:
+        "410":
+          description: Gone
+          schema:
+            type: json
+      summary: Delete an user
+      tags:
+      - users
+    get:
+      description: Responds with the user
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: Found
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: Retreive an user
+      tags:
+      - users
+    put:
+      description: Responds with the updated user
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: Update an existed user
+      tags:
+      - users
+  /api/users/:username/todos:
+    post:
+      description: Responds with the new todo
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: json
+      summary: Create a new todo
+      tags:
+      - todos
+  /api/users/:username/todos/:id:
+    delete:
+      description: Responds with the message
+      produces:
+      - application/json
+      responses:
+        "410":
+          description: Gone
+          schema:
+            type: json
+      summary: Delete a todo
+      tags:
+      - todos
+    get:
+      description: Responds with the todo
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: Found
+          schema:
+            $ref: '#/definitions/models.Todo'
+      summary: Retreive a todo
+      tags:
+      - todos
+    put:
+      description: Responds with the updated todo
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            type: json
+      summary: Update an existed todo
+      tags:
+      - todos
+  /authenticate:
+    post:
+      description: Responds with the JWT token".
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: text
+      summary: Authenticate to get JWT token
+      tags:
+      - authentication
+  /hello-world:
+    get:
+      description: Responds with the greeting word "Hello World!".
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: text
+      summary: Say "Hello World!"
+      tags:
+      - hello
+  /hello-world-bean/path-variable/:username:
+    get:
+      description: Responds with the greeting word "Hello World! to {username}".
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: text
+      summary: Say "Hello World! to {username}"
+      tags:
+      - hello
+swagger: "2.0"
