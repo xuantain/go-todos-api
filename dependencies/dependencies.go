@@ -14,7 +14,7 @@ type Dependencies struct {
 }
 
 func Init() *Dependencies {
-	fmt.Println("Dependencies >>> Init() >>")
+	fmt.Println("Init >>> Dependencies")
 	appConfig := config.GetAppConfig()
 
 	return &Dependencies{
