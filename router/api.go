@@ -1,4 +1,4 @@
-package api
+package router
 
 import (
 	"go-todos-api/dependencies"
@@ -10,12 +10,13 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func SetupRoutes(deps *dependencies.Dependencies) *gin.Engine {
+func SetupApis(deps *dependencies.Dependencies) *gin.Engine {
 
 	r := gin.Default()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 
+	// Set route for Swagger docs
 	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Hello World Apis
