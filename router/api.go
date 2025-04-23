@@ -63,26 +63,26 @@ func SetupApis(deps *dependencies.Dependencies) *gin.Engine {
 	// }
 
 	/** User APIs */
-	userRoutes := authoried.Group("/")
+	userRoutes := authoried.Group("/users")
 	{
 		userHandler := deps.UserHandler
 
-		userRoutes.GET("/users", userHandler.GetAllUsers)
-		userRoutes.POST("/users", userHandler.CreateUser)
-		userRoutes.GET("/users/:id", userHandler.Retrieve)
-		userRoutes.PUT("/users/:id", userHandler.UpdateUser)
-		userRoutes.DELETE("/users/:id", userHandler.DeleteUser)
+		r.GET("", userHandler.GetAllUsers)
+		userRoutes.POST("", userHandler.CreateUser)
+		userRoutes.GET("/:userId", userHandler.Retrieve)
+		userRoutes.PUT("/:userId", userHandler.UpdateUser)
+		userRoutes.DELETE("/:userId", userHandler.DeleteUser)
 	}
 
 	/** Todo APIs */
-	todoRoutes := authoried.Group("/users")
+	todoRoutes := authoried.Group("/users/:userId")
 	{
 		todoHandler := deps.TodoHandler
-		todoRoutes.GET("/:username/todos", todoHandler.GetAllUserTodos)
-		todoRoutes.POST("/:username/todos", todoHandler.CreateTodo)
-		todoRoutes.GET("/:username/todos/:id", todoHandler.Retrieve)
-		todoRoutes.PUT("/:username/todos/:id", todoHandler.UpdateTodo)
-		todoRoutes.DELETE("/:username/todos/:id", todoHandler.DeleteTodo)
+		todoRoutes.GET("/todos", todoHandler.GetAllUserTodos)
+		todoRoutes.POST("/todos", todoHandler.CreateTodo)
+		todoRoutes.GET("/todos/:todoId", todoHandler.Retrieve)
+		todoRoutes.PUT("/todos/:todoId", todoHandler.UpdateTodo)
+		todoRoutes.DELETE("/todos/:todoId", todoHandler.DeleteTodo)
 	}
 
 	return r

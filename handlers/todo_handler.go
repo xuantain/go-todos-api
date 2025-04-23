@@ -23,10 +23,10 @@ type TodoHandler struct {
 // @Tags			todos
 // @Produce			json
 // @Success			200  {array}  []models.Todo
-// @Router			/api/users/:username/todos/:id [get]
+// @Router			/api/users/:userId/todos [get]
 func (h TodoHandler) GetAllUserTodos(c *gin.Context) {
 
-	if username := c.Param("username"); username != "" {
+	if username := c.Param("userId"); username != "" {
 
 		todoList, err := h.TodoRepo.ListByUsername(c.Request.Context(), username, 0, 10)
 
@@ -47,7 +47,7 @@ func (h TodoHandler) GetAllUserTodos(c *gin.Context) {
 // @Tags			todos
 // @Produce			json
 // @Success			201  {json}  { 'todo': models.Todo }
-// @Router			/api/users/:username/todos [post]
+// @Router			/api/users/:userId/todos [post]
 func (h TodoHandler) CreateTodo(c *gin.Context) {
 	newTodo := models.Todo{}
 
@@ -70,12 +70,12 @@ func (h TodoHandler) CreateTodo(c *gin.Context) {
 // @Tags			todos
 // @Produce			json
 // @Success			202  {json}  { 'todo': models.Todo }
-// @Router			/api/users/:username/todos/:id [put]
+// @Router			/api/users/:userId/todos/:todoId [put]
 func (h TodoHandler) UpdateTodo(c *gin.Context) {
 
-	if c.Param("id") != "" {
+	if c.Param("todoId") != "" {
 
-		u64, err := strconv.ParseUint(c.Param("id"), 10, 32)
+		u64, err := strconv.ParseUint(c.Param("todoId"), 10, 32)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": "bad request"})
 		}
@@ -107,12 +107,12 @@ func (h TodoHandler) UpdateTodo(c *gin.Context) {
 // @Tags			todos
 // @Produce			json
 // @Success			302  {object}  models.Todo
-// @Router			/api/users/:username/todos/:id [get]
+// @Router			/api/users/:userId/todos/:todoId [get]
 func (h TodoHandler) Retrieve(c *gin.Context) {
 
-	if c.Param("id") != "" {
+	if c.Param("todoId") != "" {
 
-		u64, err := strconv.ParseUint(c.Param("id"), 10, 32)
+		u64, err := strconv.ParseUint(c.Param("todoId"), 10, 32)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": "bad request"})
 		}
@@ -139,12 +139,12 @@ func (h TodoHandler) Retrieve(c *gin.Context) {
 // @Tags			todos
 // @Produce			json
 // @Success			410  {json}  { 'message': 'Deleted todo id:%d' }
-// @Router			/api/users/:username/todos/:id [delete]
+// @Router			/api/users/:userId/todos/:todoId [delete]
 func (h TodoHandler) DeleteTodo(c *gin.Context) {
 
-	if c.Param("id") != "" {
+	if c.Param("todoId") != "" {
 
-		u64, err := strconv.ParseUint(c.Param("id"), 10, 32)
+		u64, err := strconv.ParseUint(c.Param("todoId"), 10, 32)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": "bad request"})
 		}
@@ -156,7 +156,7 @@ func (h TodoHandler) DeleteTodo(c *gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"message": "Deleted todo id:" + c.Param("id")})
+		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("Deleted todo id:{%d}", todoId)})
 		return
 	}
 

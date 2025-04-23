@@ -104,3 +104,16 @@ func (r *TodoRepository) ListByUsername(ctx context.Context, username string, pa
 	}
 	return todos, err
 }
+
+func (r *TodoRepository) ListByUserId(ctx context.Context, userId string, page, limit int) ([]*models.Todo, error) {
+	var todos []*models.Todo
+	offset := (page - 1) * limit
+	err := r.DB.WithContext(ctx).
+		Where("id = ?", userId).
+		Offset(offset).Limit(limit).
+		Find(&todos).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil
+	}
+	return todos, err
+}
