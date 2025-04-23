@@ -1,0 +1,80 @@
+{{ define "TodoList" }}
+
+<!--Embed the header.html template at this location-->
+{{ template "Header" . }}
+
+<div class="max-w-screen-lg mx-auto text-center">
+
+    <h1 class="font-bold text-4xl m-5 p-2">Things you want to do!</h1>
+    
+    <!-- <div class="mt-10">
+        <form method="GET" action="/" class="flex flex-wrap" id="searchForm">
+            <input type="text" name="title" id="queryBox" class="bg-white shadow-sm border border-green-200 w-4/5 rounded-md py-2 px-4" placeholder="Search...">
+            <div class="w-1/5 px-1">
+                <button class="bg-green-700 text-white rounded-md py-2 px-3 w-full" type="submit">Search</button>
+            </div>
+        </form>
+    </div> -->
+    
+    <!-- {message && <div class="alert alert-warning">{message}</div>} -->
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="px-6 py-3">
+                        Id
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Description
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        TargetDate
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Is done?
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        <span class="sr-only">Delete</span>
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        <span class="sr-only">Edit</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            {{ range .todos }}
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        {{ .ID }}
+                    </th>
+                    <td class="px-6 py-4">
+                        {{ .Description }}
+                    </td>
+                    <td class="px-6 py-4">
+                        {{ .TargetDate }}
+                    </td>
+                    <td class="px-6 py-4">
+                        {{ .Done }}
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <a href="#" class="font-medium text-red-600 dark:text-red-500 hover:underline">Delete</a>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <a href="/page/todo/{{ .ID }}" class="font-medium text-green-600 dark:text-green-500 hover:underline">Edit</a>
+                    </td>
+                </tr>
+            {{ end }}
+        </tbody>
+        </table>
+    </div>
+
+    <div class="my-5">
+        <a href="/page/todo" class="bg-green-700 text-white shadow-sm border border-green-200 rounded-md py-2 px-4">Add New Todo</a>
+    </div>
+
+</div>
+
+<!--Embed the footer.html template at this location-->
+{{ template "Footer" . }}
+
+{{ end }}

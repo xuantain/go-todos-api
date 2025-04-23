@@ -10,11 +10,13 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func SetupApis(deps *dependencies.Dependencies) *gin.Engine {
+func SetupApis(deps *dependencies.Dependencies, r *gin.Engine) *gin.Engine {
 
-	r := gin.Default()
-	r.Use(gin.Logger())
-	r.Use(gin.Recovery())
+	if r == nil {
+		r = gin.Default()
+		r.Use(gin.Logger())
+		r.Use(gin.Recovery())
+	}
 
 	// Set route for Swagger docs
 	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

@@ -1,0 +1,15 @@
+{{ define "Index" }}
+
+<!--Embed the header.html template at this location-->
+{{ template "Header" . }}
+
+<div class="max-w-screen-lg mx-auto">
+
+	{{ template "Login" . }}
+
+</div>
+
+<!--Embed the footer.html template at this location-->
+{{ template "Footer" . }}
+
+{{ end }}

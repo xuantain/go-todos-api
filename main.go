@@ -39,7 +39,8 @@ func main() {
 	deps := dependencies.Init()
 
 	// Setup routes
-	server := router.SetupApis(deps)
+	server := router.SetupRoutes(deps, nil)
+	server = router.SetupApis(deps, server)
 
 	// Start web-service
 	address := configs.GetString("server.address")
