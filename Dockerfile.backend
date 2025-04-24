@@ -1,18 +1,13 @@
 # Stage 1: Build the application
 FROM golang:1.24-alpine AS builder
 
-# gapp => group_name
-# app => user_name
-# group_id => 10001 (custom)
-# user_id => 1002 (custom)
+# Create a non-root user to run app
+RUN adduser -D -h /home/webuser -u 1001 -s /sbin/nologin webuser
 
-# Binaries scripts
-# RUN groupadd --gid 10001 gapp && \
-#     useradd --gid 10001 --uid 1002 --home-dir /go/src/app app
+RUN chown -R webuser:webuser /go && \
+    chmod -R 755 /go
 
-# Perl scripts
-RUN addgroup -g 10001 gapp && \ 
-    adduser -D -G gapp -h /go/src/app -u 1002 app 
+USER webuser
 
 RUN go install github.com/air-verse/air@latest
 
@@ -35,4 +30,5 @@ COPY --from=builder /go/src/app /go/src/app
 RUN apk add --no-cache gcc musl-dev
 
 EXPOSE 8080
+
 CMD ["air", "-c", ".air.toml"]
