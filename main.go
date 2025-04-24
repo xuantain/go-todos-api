@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"os"
 
-	router "go-todos-api/api"
 	"go-todos-api/config"
 	"go-todos-api/dependencies"
 	_ "go-todos-api/docs"
+	"go-todos-api/router"
 )
 
 // @title			Gingo Todos API
@@ -39,7 +39,8 @@ func main() {
 	deps := dependencies.Init()
 
 	// Setup routes
-	server := router.SetupRoutes(deps)
+	server := router.SetupRoutes(deps, nil)
+	server = router.SetupApis(deps, server)
 
 	// Start web-service
 	address := configs.GetString("server.address")

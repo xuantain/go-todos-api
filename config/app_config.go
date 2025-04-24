@@ -24,14 +24,14 @@ func InitApp() *AppConfig {
 	dbInstance := db.InitDb()
 	db.SeedDB(dbInstance)
 
-	fmt.Println("InitApp >> Seeded DB")
+	fmt.Println("Init >>> Seeded DB")
 
 	appConfigInstance = &AppConfig{
 		DB:       dbInstance,
 		UserRepo: &repositories.UserRepository{DB: dbInstance},
 		TodoRepo: &repositories.TodoRepository{DB: dbInstance},
 	}
-	fmt.Println("InitApp >> appConfig", appConfigInstance)
+	fmt.Println("Init >>> App")
 
 	return appConfigInstance
 }

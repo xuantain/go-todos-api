@@ -69,7 +69,7 @@ func (u *UserHandler) CreateUser(c *gin.Context) {
 // @Tags			users
 // @Produce			json
 // @Success			202  {object}  models.User
-// @Router			/api/users/:id [put]
+// @Router			/api/users/:userId [put]
 func (u *UserHandler) UpdateUser(c *gin.Context) {
 
 	newUser := models.User{}
@@ -95,12 +95,12 @@ func (u *UserHandler) UpdateUser(c *gin.Context) {
 // @Tags			users
 // @Produce			json
 // @Success			302  {object}  models.User
-// @Router			/api/users/:id [get]
+// @Router			/api/users/:userId [get]
 func (u *UserHandler) Retrieve(c *gin.Context) {
 
-	if c.Param("id") != "" {
+	if c.Param("userId") != "" {
 
-		u64, err := strconv.ParseUint(c.Param("id"), 10, 32)
+		u64, err := strconv.ParseUint(c.Param("userId"), 10, 32)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": "bad request"})
 		}
@@ -128,12 +128,12 @@ func (u *UserHandler) Retrieve(c *gin.Context) {
 // @Tags			users
 // @Produce			json
 // @Success			410  {json}  { 'message': 'Deleted user id:%d' }
-// @Router			/api/users/:id [delete]
+// @Router			/api/users/:userId [delete]
 func (u *UserHandler) DeleteUser(c *gin.Context) {
 
-	if c.Param("id") != "" {
+	if c.Param("userId") != "" {
 
-		u64, err := strconv.ParseUint(c.Param("id"), 10, 32)
+		u64, err := strconv.ParseUint(c.Param("userId"), 10, 32)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": "bad request"})
 		}
