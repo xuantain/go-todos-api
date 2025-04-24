@@ -1,6 +1,19 @@
 # Stage 1: Build the application
 FROM golang:1.24-alpine AS builder
 
+# gapp => group_name
+# app => user_name
+# group_id => 10001 (custom)
+# user_id => 1002 (custom)
+
+# Binaries scripts
+# RUN groupadd --gid 10001 gapp && \
+#     useradd --gid 10001 --uid 1002 --home-dir /go/src/app app
+
+# Perl scripts
+RUN addgroup -g 10001 gapp && \ 
+    adduser -D -G gapp -h /go/src/app -u 1002 app 
+
 RUN go install github.com/air-verse/air@latest
 
 WORKDIR /go/src/app
