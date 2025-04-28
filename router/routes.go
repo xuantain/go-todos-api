@@ -23,11 +23,11 @@ func SetupRoutes(deps *dependencies.Dependencies, r *gin.Engine) *gin.Engine {
 
 	todoController := deps.TodoController
 
-	r.GET("/page/", todoController.Index)
-	r.GET("/page/welcome", todoController.Welcome)
-	r.GET("/page/todos", todoController.ListTodos)
-	r.GET("/page/todo", todoController.CreateTodo)
-	r.GET("/page/todo/:todoId", todoController.UpdateTodo)
+	r.GET("/", todoController.Index)
+	r.GET("/welcome", todoController.Welcome)
+	r.GET("/todos", todoController.ListTodos)
+	r.GET("/todo", todoController.CreateTodo)
+	r.GET("/todo/:todoId", todoController.UpdateTodo)
 
 	return r
 }
