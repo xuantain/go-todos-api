@@ -1,43 +1,92 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 
 	_ "go-todos-api/docs"
 	"go-todos-api/models"
+	"go-todos-api/pkg/helpers"
 	"go-todos-api/repositories"
 
 	"github.com/gin-gonic/gin"
 )
 
-type TodoController struct{}
-
-func (u TodoController) Index(c *gin.Context) {
-	c.HTML(http.StatusOK, "Index", gin.H{
-		"title": "Home Page",
-	})
-	c.Abort()
+type TodoController struct {
+	TodoRepo repositories.TodoRepository
+	UserRepo repositories.UserRepository
 }
 
-func (u TodoController) Welcome(c *gin.Context) {
+func (ctl TodoController) Index(c *gin.Context) {
+	message, err := c.Cookie("message")
+	if err != nil {
+		c.HTML(http.StatusOK, "Index", gin.H{
+			"title":   "Login",
+			"message": message,
+		})
+		c.SetCookie("message", "", -1, "/", c.Request.Host, false, true) // Clear the cookie
+	} else {
+		c.HTML(http.StatusOK, "Index", gin.H{
+			"title": "Home Page",
+		})
+	}
+}
+
+func (ctl TodoController) Welcome(c *gin.Context) {
+
+	user := helpers.Auth(c)
+	if user.Username == "" {
+		c.Redirect(http.StatusFound, "/page/login")
+	}
+	username := user.Username
+	// username, err := c.Cookie("username")
+	// if err != nil {
+	// 	c.SetCookie("message", "Unauthentication", 180, "/", c.Request.Host, false, true)
+	// 	c.Redirect(http.StatusFound, "/page/")
+	// }
+
+	msg := fmt.Sprintf("Welcome back %v!", username)
 	c.HTML(http.StatusOK, "Welcome", gin.H{
-		"welcome":   "Welcome to Todo API docs!",
+		"welcome":   msg,
 		"linkTitle": "Click here to access API docs",
 		"link":      "/api/docs/index.html",
 	})
-	c.Abort()
 }
 
-func (u TodoController) ListTodos(c *gin.Context) {
-	todoList := repositories.GetTodoListMockData()
-	c.HTML(http.StatusOK, "TodoList", gin.H{
-		"title": "Todos Page",
-		"todos": todoList,
-	})
-	c.Abort()
+func (ctl TodoController) ListTodos(c *gin.Context) {
+
+	user := helpers.Auth(c)
+	userId := user.Id
+	// userId, err := c.Cookie("userId")
+	// if err != nil {
+	// 	c.SetCookie("message", "Unauthentication", 180, "/", c.Request.Host, false, true)
+	// 	c.Redirect(http.StatusFound, "/page/")
+	// }
+
+	todoList, err := ctl.TodoRepo.ListByUserId(c.Request.Context(), fmt.Sprintf("%d", userId), 0, 10)
+	if err != nil {
+		// todo: db connection error or ?
+	}
+
+	message, err := c.Cookie("message")
+
+	if err != nil {
+		c.HTML(http.StatusOK, "TodoList", gin.H{
+			"title":   "Todos Page",
+			"todos":   todoList,
+			"message": message,
+		})
+		c.SetCookie("message", "", -1, "/", c.Request.Host, false, true) // Clear the cookie
+	} else {
+		c.HTML(http.StatusOK, "TodoList", gin.H{
+			"title": "Todos Page",
+			"todos": todoList,
+		})
+	}
 }
 
-func (u TodoController) CreateTodo(c *gin.Context) {
+func (ctl TodoController) CreateTodo(c *gin.Context) {
 	newTodo := models.Todo{}
 	c.HTML(http.StatusOK, "Todo", gin.H{
 		"title": "Todo",
@@ -46,11 +95,42 @@ func (u TodoController) CreateTodo(c *gin.Context) {
 	c.Abort()
 }
 
-func (u TodoController) UpdateTodo(c *gin.Context) {
+func (ctl TodoController) UpdateTodo(c *gin.Context) {
 	todo := repositories.GetTodoListMockData()[0]
 	c.HTML(http.StatusOK, "Todo", gin.H{
 		"title": "Todo",
 		"todo":  todo,
 	})
+	c.Abort()
+}
+
+func (ctl TodoController) DeleteTodo(c *gin.Context) {
+
+	if c.Param("id") != "" {
+
+		u64, err := strconv.ParseUint(c.Param("id"), 10, 32)
+		if err != nil {
+			message := "Missing Todo Id"
+			c.SetCookie("message", message, 180, "/", c.Request.Host, false, true)
+			c.Redirect(http.StatusBadRequest, "/todos/")
+		}
+		todoId := uint(u64)
+
+		if err := ctl.TodoRepo.Delete(c.Request.Context(), todoId); err != nil {
+			message := fmt.Sprintf("Cannot delete Todo {%d}", todoId)
+			c.SetCookie("message", message, 180, "/", c.Request.Host, false, true)
+			c.Redirect(http.StatusNotFound, "/todos/")
+			return
+		}
+
+		message := fmt.Sprintf("Deleted todo id:{%d}", todoId)
+		c.SetCookie("message", message, 180, "/", c.Request.Host, false, true)
+		c.Redirect(http.StatusOK, "/todos/")
+		return
+	}
+
+	message := "Missing Todo Id"
+	c.SetCookie("message", message, 180, "/", c.Request.Host, false, true)
+	c.Redirect(http.StatusBadRequest, "/todos/")
 	c.Abort()
 }
