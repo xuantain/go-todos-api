@@ -12,6 +12,7 @@ RUN go mod download
 # RUN CGO_ENABLED=0 GOOS=linux go build -o /go/bin/app
 
 # Stage 2: Run the application
+# Use stage 2 to reduce the size of image also
 FROM golang:1.24-alpine
 
 WORKDIR /go/src/app
@@ -21,5 +22,14 @@ COPY --from=builder /go/src/app /go/src/app
 # install dependencies for air
 RUN apk add --no-cache gcc musl-dev
 
+# Create a non-root user to run app
+RUN adduser -D -h /home/webuser -u 1001 -s /sbin/nologin webuser
+
+RUN chown -R webuser:webuser /go && \
+    chmod -R 755 /go
+
+USER webuser
+
 EXPOSE 8080
+
 CMD ["air", "-c", ".air.toml"]
