@@ -87,7 +87,25 @@ func (ctl TodoController) ListTodos(c *gin.Context) {
 }
 
 func (ctl TodoController) CreateTodo(c *gin.Context) {
+
 	newTodo := models.Todo{}
+
+	if c.Request.Method == http.MethodPost {
+
+		if err := c.ShouldBind(&newTodo); err != nil {
+			helpers.Flash(c, "error", err.Error())
+			return
+		}
+
+		if err := ctl.TodoRepo.Create(c.Request.Context(), &newTodo); err != nil {
+			helpers.Flash(c, "error", err.Error())
+			return
+		}
+
+		c.Redirect(http.StatusFound, "/page/todos")
+		return
+	}
+
 	c.HTML(http.StatusOK, "Todo", gin.H{
 		"title": "Todo",
 		"todo":  newTodo,
@@ -96,7 +114,40 @@ func (ctl TodoController) CreateTodo(c *gin.Context) {
 }
 
 func (ctl TodoController) UpdateTodo(c *gin.Context) {
-	todo := repositories.GetTodoListMockData()[0]
+
+	u64, err := strconv.ParseUint(c.Param("todoId"), 10, 32)
+	if err != nil {
+		helpers.Flash(c, "error", err.Error())
+		c.Abort()
+	}
+	todoId := uint(u64)
+
+	todo, err := ctl.TodoRepo.FindByID(c, todoId)
+	if err != nil {
+		helpers.Flash(c, "error", err.Error())
+		c.Abort()
+	}
+
+	if c.Request.Method == http.MethodPost {
+
+		updatedTodo := models.Todo{}
+
+		if err := c.ShouldBind(&updatedTodo); err != nil {
+			helpers.Flash(c, "error", err.Error())
+			c.Abort()
+		}
+		fmt.Println("Update ############################## " + updatedTodo.TargetDate.String())
+
+		updatedTodo.ID = todoId
+		if err := ctl.TodoRepo.Update(c.Request.Context(), &updatedTodo); err != nil {
+			helpers.Flash(c, "error", err.Error())
+			c.Abort()
+		}
+
+		c.Redirect(http.StatusFound, "/page/todos")
+		return
+	}
+
 	c.HTML(http.StatusOK, "Todo", gin.H{
 		"title": "Todo",
 		"todo":  todo,
@@ -112,25 +163,25 @@ func (ctl TodoController) DeleteTodo(c *gin.Context) {
 		if err != nil {
 			message := "Missing Todo Id"
 			c.SetCookie("message", message, 180, "/", c.Request.Host, false, true)
-			c.Redirect(http.StatusBadRequest, "/todos/")
+			c.Redirect(http.StatusTemporaryRedirect, "/page/todos/")
 		}
 		todoId := uint(u64)
 
 		if err := ctl.TodoRepo.Delete(c.Request.Context(), todoId); err != nil {
 			message := fmt.Sprintf("Cannot delete Todo {%d}", todoId)
 			c.SetCookie("message", message, 180, "/", c.Request.Host, false, true)
-			c.Redirect(http.StatusNotFound, "/todos/")
+			c.Redirect(http.StatusNotFound, "/page/todos/")
 			return
 		}
 
 		message := fmt.Sprintf("Deleted todo id:{%d}", todoId)
 		c.SetCookie("message", message, 180, "/", c.Request.Host, false, true)
-		c.Redirect(http.StatusOK, "/todos/")
+		c.Redirect(http.StatusOK, "/page/todos/")
 		return
 	}
 
 	message := "Missing Todo Id"
 	c.SetCookie("message", message, 180, "/", c.Request.Host, false, true)
-	c.Redirect(http.StatusBadRequest, "/todos/")
+	c.Redirect(http.StatusTemporaryRedirect, "/page/todos/")
 	c.Abort()
 }

@@ -58,7 +58,7 @@
                         {{ .Description }}
                     </td>
                     <td class="px-6 py-4">
-                        {{ .TargetDate }}
+                        {{ .TargetDate.Format "2006-01-02" }}
                     </td>
                     <td class="px-6 py-4">
                         {{ .Done }}
@@ -81,7 +81,7 @@
 
 </div>
 
-<script src="/static/js/test.js"></script>
+<script src="/static/js/app.js"></script>
 
 <!--Embed the footer.html template at this location-->
 {{ template "Footer" . }}
