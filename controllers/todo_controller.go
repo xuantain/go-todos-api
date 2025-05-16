@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	_ "go-todos-api/docs"
 	"go-todos-api/models"
 	"go-todos-api/pkg/helpers"
+	"go-todos-api/pkg/types"
 	"go-todos-api/repositories"
 
 	"github.com/gin-gonic/gin"
@@ -64,7 +66,7 @@ func (ctl TodoController) ListTodos(c *gin.Context) {
 	// 	c.Redirect(http.StatusFound, "/page/")
 	// }
 
-	todoList, err := ctl.TodoRepo.ListByUserId(c.Request.Context(), fmt.Sprintf("%d", userId), 0, 10)
+	todoList, err := ctl.TodoRepo.ListByUserId(c.Request.Context(), userId, 0, 10)
 	if err != nil {
 		// todo: db connection error or ?
 	}
@@ -106,6 +108,7 @@ func (ctl TodoController) CreateTodo(c *gin.Context) {
 		return
 	}
 
+	newTodo.TargetDate = types.DateType{Time: time.Now()}
 	c.HTML(http.StatusOK, "Todo", gin.H{
 		"title": "Todo",
 		"todo":  newTodo,
@@ -136,9 +139,23 @@ func (ctl TodoController) UpdateTodo(c *gin.Context) {
 			helpers.Flash(c, "error", err.Error())
 			c.Abort()
 		}
-		fmt.Println("Update ############################## " + updatedTodo.TargetDate.String())
+
+		// Todo: The field should be serialized by c.ShouldBind instead of manually updating like following
+		targetDate, ok := c.GetPostForm("targetDate")
+		if ok {
+			fmt.Println("Update ############################## " + targetDate)
+		}
+
+		parsedTime, err := time.Parse(types.DateFormat, targetDate)
+		if err != nil {
+			fmt.Println("Error parsing time string:", err)
+			return
+		}
 
 		updatedTodo.ID = todoId
+		updatedTodo.UserID = todo.UserID
+		updatedTodo.TargetDate = types.DateType{Time: parsedTime}
+
 		if err := ctl.TodoRepo.Update(c.Request.Context(), &updatedTodo); err != nil {
 			helpers.Flash(c, "error", err.Error())
 			c.Abort()
