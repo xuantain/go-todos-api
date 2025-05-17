@@ -9,6 +9,10 @@ import (
 	"go-todos-api/dependencies"
 	_ "go-todos-api/docs"
 	"go-todos-api/router"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
+	"github.com/gin-gonic/gin"
 )
 
 // @title			Gingo Todos API
@@ -39,7 +43,11 @@ func main() {
 	deps := dependencies.Init()
 
 	// Setup routes
-	server := router.SetupRoutes(deps, nil)
+	server := gin.Default()
+	// Use cookie-based session store
+	store := cookie.NewStore([]byte("secret"))
+	server.Use(sessions.Sessions("userSession", store))
+	server = router.SetupRoutes(deps, server)
 	server = router.SetupApis(deps, server)
 
 	// Start web-service

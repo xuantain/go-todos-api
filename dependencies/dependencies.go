@@ -13,6 +13,7 @@ type Dependencies struct {
 	UserHandler    *handlers.UserHandler
 	TodoHandler    *handlers.TodoHandler
 	TodoController *controllers.TodoController
+	AuthController *controllers.AuthenticationController
 }
 
 func Init() *Dependencies {
@@ -30,6 +31,12 @@ func Init() *Dependencies {
 		TodoHandler: &handlers.TodoHandler{
 			TodoRepo: *appConfig.TodoRepo,
 		},
-		TodoController: &controllers.TodoController{},
+		TodoController: &controllers.TodoController{
+			TodoRepo: *appConfig.TodoRepo,
+			UserRepo: *appConfig.UserRepo,
+		},
+		AuthController: &controllers.AuthenticationController{
+			UserRepo: *appConfig.UserRepo,
+		},
 	}
 }

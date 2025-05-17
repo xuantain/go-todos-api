@@ -6,21 +6,23 @@
 <div class="max-w-screen-lg mx-auto text-center">
     <h1 class="font-bold text-4xl m-5 p-2">Enter Todo Details</h1>
     <div>
-        <form method="POST" action="/page/todo" id="TodoForm">
+        <form method="POST" action="/page/todo{{ if .todo.ID }}/{{.todo.ID}}{{ end }}" id="TodoForm">
             <div class="flex flex-wrap my-1">
                 <label for="description" class="w-1/5 py-2 px-4">Description</label>
                 <div class="w-4/5 px-1">
-                    <input type="text" class="bg-white shadow-sm border border-green-200 rounded-md w-full py-2 px-4" name="description" value="{{ .todo.Description }}" />
+                    <input type="text" class="bg-white shadow-sm border border-green-200 rounded-md w-full py-2 px-4"
+                        name="description" value="{{ .todo.Description }}" />
                 </div>
             </div>
             <div class="flex flex-wrap my-1">
                 <label for="targetDate" class="w-1/5 py-2 px-4">Target Date</label>
                 <div class="w-1/5 px-1">
-                    <input type="date" class="bg-white shadow-sm border border-green-200 rounded-md w-full py-2 px-4" name="targetDate" value="{{ .todo.TargetDate }}" />
+                    <input type="date" class="bg-white shadow-sm border border-green-200 rounded-md w-full py-2 px-4"
+                        name="targetDate" value={{ .todo.TargetDate.String }} />
                 </div>
             </div>
             <div class="my-5">
-                <button class="bg-green-700 text-white shadow-sm border border-green-200 rounded-md py-2 px-4" type="submit">Save</button>
+                <button type="submit" class="bg-green-700 text-white shadow-sm border border-green-200 rounded-md py-2 px-4">Save</button>
             </div>
         </form>
     </div>

@@ -6,7 +6,13 @@
 <div class="max-w-screen-lg mx-auto text-center">
 
     <h1 class="font-bold text-4xl m-5 p-2">Things you want to do!</h1>
-    
+
+    {{ if .message }}
+    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+        <span class="font-medium">{{ .message }}</span>
+    </div>
+    {{ end }}
+
     <!-- <div class="mt-10">
         <form method="GET" action="/" class="flex flex-wrap" id="searchForm">
             <input type="text" name="title" id="queryBox" class="bg-white shadow-sm border border-green-200 w-4/5 rounded-md py-2 px-4" placeholder="Search...">
@@ -15,9 +21,12 @@
             </div>
         </form>
     </div> -->
-    
+
     <!-- {message && <div class="alert alert-warning">{message}</div>} -->
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <form method="POST" action="/page/todo/del" id="TodoListForm">
+            <input type="hidden" name="id" />
+        </form>
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
@@ -51,13 +60,13 @@
                         {{ .Description }}
                     </td>
                     <td class="px-6 py-4">
-                        {{ .TargetDate }}
+                        {{ .TargetDate.Format "2006-01-02" }}
                     </td>
                     <td class="px-6 py-4">
                         {{ .Done }}
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <a href="#" class="font-medium text-red-600 dark:text-red-500 hover:underline">Delete</a>
+                        <a href="#" data-id="{{ .ID }}" class="btn-del__todo font-medium text-red-600 dark:text-red-500 hover:underline">Delete</a>
                     </td>
                     <td class="px-6 py-4 text-right">
                         <a href="/page/todo/{{ .ID }}" class="font-medium text-green-600 dark:text-green-500 hover:underline">Edit</a>
@@ -73,6 +82,8 @@
     </div>
 
 </div>
+
+<script src="/static/js/app.js"></script>
 
 <!--Embed the footer.html template at this location-->
 {{ template "Footer" . }}

@@ -24,7 +24,8 @@ func InitDb() *gorm.DB {
 	// 	return nil
 	// }
 
-	return Db
+	return Db.Debug()
+	// return Db
 }
 
 func connectSqlDB() *gorm.DB {

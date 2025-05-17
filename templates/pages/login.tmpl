@@ -1,22 +1,27 @@
 {{ define "Login" }}
 <div class="Login text-center">
     <h1 class="font-bold text-4xl m-5 p-2">Time to login</h1>
-    <form method="POST" action="/login" id="LoginForm"></form>
+    {{ if .message }}
+    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+        <span class="font-medium">{{ .message }}</span>
+    </div>
+    {{ end }}
+    <form method="POST" action="/page/login" id="LoginForm">
         <!-- {showError && <div class="errorMessage mb-3 alert alert-warning">Authenticated Failed. Please check your credentials.</div>} -->
         <div class="flex flex-wrap justify-center my-1">
             <label for="username" class="w-1/5 py-2 px-4">Username</label>
             <div class="w-1/5 px-1">
-                <input type="text" class="bg-white shadow-sm border border-green-200 rounded-md w-full py-2 px-4" name="username" value="" />
+                <input type="text" class="bg-white shadow-sm border border-green-200 rounded-md w-full py-2 px-4" name="username" />
             </div>
         </div>
         <div class="flex flex-wrap justify-center my-1">
             <label for="password" class="w-1/5 py-2 px-4">Password</label>
             <div class="w-1/5 px-1">
-                <input type="password" class="bg-white shadow-sm border border-green-200 rounded-md w-full py-2 px-4" name="password" value="" />
+                <input type="password" class="bg-white shadow-sm border border-green-200 rounded-md w-full py-2 px-4" name="password" />
             </div>
         </div>
         <div class="my-5">
-            <button type="submit" class="bg-green-700 text-white shadow-sm border border-green-200 rounded-md py-2 px-4" name="login" onClick={handleSubmit}>Login</button>
+            <button type="submit" class="bg-green-700 text-white shadow-sm border border-green-200 rounded-md py-2 px-4" name="login">Login</button>
         </div>
     </form>
 </div>
