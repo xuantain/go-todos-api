@@ -174,31 +174,37 @@ func (ctl TodoController) UpdateTodo(c *gin.Context) {
 
 func (ctl TodoController) DeleteTodo(c *gin.Context) {
 
-	if c.Param("id") != "" {
+	todoId := ""
+	if err := c.Request.ParseForm(); err == nil {
+		todoId = c.Request.PostForm.Get("id")
+	}
 
-		u64, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if todoId != "" {
+
+		u64, err := strconv.ParseUint(todoId, 10, 32)
 		if err != nil {
 			message := "Missing Todo Id"
 			c.SetCookie("message", message, 180, "/", c.Request.Host, false, true)
-			c.Redirect(http.StatusTemporaryRedirect, "/page/todos/")
+			c.Redirect(http.StatusFound, "/page/todos")
 		}
 		todoId := uint(u64)
 
 		if err := ctl.TodoRepo.Delete(c.Request.Context(), todoId); err != nil {
 			message := fmt.Sprintf("Cannot delete Todo {%d}", todoId)
 			c.SetCookie("message", message, 180, "/", c.Request.Host, false, true)
-			c.Redirect(http.StatusNotFound, "/page/todos/")
+			c.Redirect(http.StatusFound, "/page/todos")
 			return
 		}
 
 		message := fmt.Sprintf("Deleted todo id:{%d}", todoId)
 		c.SetCookie("message", message, 180, "/", c.Request.Host, false, true)
-		c.Redirect(http.StatusOK, "/page/todos/")
+		// Note: To redirect > Must use http.StatusFound; Or http.StatusTemporaryRedirect with method
+		c.Redirect(http.StatusFound, "/page/todos")
 		return
 	}
 
 	message := "Missing Todo Id"
 	c.SetCookie("message", message, 180, "/", c.Request.Host, false, true)
-	c.Redirect(http.StatusTemporaryRedirect, "/page/todos/")
+	c.Redirect(http.StatusFound, "/page/todos")
 	c.Abort()
 }

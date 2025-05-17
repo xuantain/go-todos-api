@@ -33,7 +33,7 @@ func SetupRoutes(deps *dependencies.Dependencies, r *gin.Engine) *gin.Engine {
 		{
 			auth.GET("/welcome", todoController.Welcome)
 			auth.GET("/todos", todoController.ListTodos)
-			// auth.POST("/todos", todoController.DeleteTodo)
+			auth.POST("/todo/del", todoController.DeleteTodo)
 			auth.GET("/todo", todoController.CreateTodo)
 			auth.POST("/todo", todoController.CreateTodo)
 			auth.GET("/todo/:todoId", todoController.UpdateTodo)
