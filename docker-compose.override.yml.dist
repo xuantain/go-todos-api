@@ -1,0 +1,10 @@
+
+services:
+  webservice:
+    environment:
+      - 'ID=$ID'
+      - 'NAME=$NAME'
+      - 'HOSTNAME=$HOSTNAME'
+      - 'IP=$IP'
+    volumes:
+      - /path/local/to/backup:/srv/backup:ro

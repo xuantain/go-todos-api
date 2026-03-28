@@ -1,10 +1,14 @@
 # Stage 1: Build the application
-FROM golang:1.24-alpine AS builder
+FROM golang:1.25-alpine AS builder
+
+RUN apk add --no-cache git
+
+WORKDIR /go/src/app
 
 RUN go install github.com/air-verse/air@latest
 
-WORKDIR /go/src/app
-COPY . .
+# Pre-cache deps
+COPY ./app/go.mod ./app/go.sum ./
 
 RUN go mod download
 
@@ -13,7 +17,7 @@ RUN go mod download
 
 # Stage 2: Run the application
 # Use stage 2 to reduce the size of image also
-FROM golang:1.24-alpine
+FROM golang:1.25-alpine
 
 WORKDIR /go/src/app
 COPY --from=builder /go/bin/air /go/bin/air
