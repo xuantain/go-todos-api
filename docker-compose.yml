@@ -24,3 +24,21 @@ services:
     networks:
       - servermanager
       - webservice
+
+  db:
+    image: mariadb:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=todos_db
+    volumes:
+      - ./docker/mariadb/my.cnf:/etc/mysql/conf.d/my.cnf:ro
+      - ./docker/mariadb/data:/var/lib/mysql
+    networks:
+      - webservice
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 5

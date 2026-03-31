@@ -1,31 +1,42 @@
-# Stage 1: Build the application
+# Stage 1: Build the Go application
 FROM golang:1.25-alpine AS builder
 
 WORKDIR /go/src/app
 
-COPY . .
+# Pre-cache deps
+COPY ./app/go.mod ./app/go.sum ./
 
 RUN go mod download
 
-# Build go app
 RUN CGO_ENABLED=0 GOOS=linux go build -o /go/bin/app
 
-# Stage 2: Run the application
-# Use stage 2 to reduce the size of image also
-FROM golang:1.25-alpine
+# Stage 2: Run with nginx as reverse proxy
+FROM alpine:3.20
+
+# Install nginx and ca-certificates
+RUN apk add --no-cache nginx ca-certificates
 
 WORKDIR /go/bin/app
 
+# Copy the compiled binary
 COPY --from=builder /go/bin/app /go/bin/app
 
-# Create a non-root user to run app
+# Copy nginx config
+COPY ./docker/nginx/nginx.conf /etc/nginx/nginx.conf
+
+# Create a non-root user
 RUN adduser -D -h /home/webuser -u 1001 -s /sbin/nologin webuser
 
 RUN chown -R webuser:webuser /go && \
-    chmod -R 755 /go
+    chmod -R 755 /go && \
+    # nginx needs to write pid and logs
+    chown -R webuser:webuser /var/log/nginx /var/lib/nginx /run/nginx 2>/dev/null || \
+    chown -R webuser:webuser /var/log/nginx && \
+    mkdir -p /tmp/nginx && chown webuser:webuser /tmp/nginx
 
 USER webuser
 
-EXPOSE 8080
+EXPOSE 8080 80
 
-CMD ["go", "run", "."]
+# Start nginx and the Go app together
+CMD nginx && /go/bin/app
