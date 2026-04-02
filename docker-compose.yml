@@ -29,6 +29,9 @@ services:
     networks:
       - servermanager
       - webservice
+    depends_on:
+      - db
+    restart: unless-stopped
 
   db:
     image: mariadb:latest
