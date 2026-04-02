@@ -13,14 +13,19 @@ networks:
 services:
   webservice:
     build:
-      dockerfile: ./docker/images/dockerfile.dev
+      dockerfile: ./docker/images/dockerfile.dev2
+    environment:
+      - GOPATH=/go
+      - AIR_WORKDIR=/go/src/app
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=todos_db
+    volumes:
+      - ./go-mod-cache:/go/pkg/mod
     expose:
       - "8080"
-    volumes:
-      - ./app:/go/src/app
-      # mount source for live reload
-      - ./app/go-mod-cache:/go/pkg/mod
-      - ./app/.air.toml:/go/src/app/.air.toml:ro
     networks:
       - servermanager
       - webservice
