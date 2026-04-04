@@ -21,6 +21,7 @@ import (
 // @host			localhost
 // @BasePath		/api/
 func main() {
+	fmt.Println("*** START APP ***")
 
 	// todo: Use .env instead?
 	environment := flag.String("env", "dev", "")
@@ -47,7 +48,7 @@ func main() {
 	// Use cookie-based session store
 	store := cookie.NewStore([]byte("secret"))
 	server.Use(sessions.Sessions("userSession", store))
-	server = router.SetupRoutes(deps, server)
+	server = router.SetupRoutes(deps, server, embeddedTemplates(), embeddedStatic())
 	server = router.SetupApis(deps, server)
 
 	// Start web-service

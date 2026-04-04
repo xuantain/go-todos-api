@@ -1,13 +1,16 @@
 package router
 
 import (
+	"html/template"
+	"net/http"
+
 	"go-todos-api/dependencies"
 	"go-todos-api/middlewares"
 
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRoutes(deps *dependencies.Dependencies, r *gin.Engine) *gin.Engine {
+func SetupRoutes(deps *dependencies.Dependencies, r *gin.Engine, tmpl *template.Template, static http.FileSystem) *gin.Engine {
 
 	if r == nil {
 		r = gin.Default()
@@ -15,12 +18,8 @@ func SetupRoutes(deps *dependencies.Dependencies, r *gin.Engine) *gin.Engine {
 		r.Use(gin.Recovery())
 	}
 
-	// Note: The root-path is the project-folder
-	//   We can use root-path => "./" or "" (empty)
-	// Load all html/tmpl templates from path
-	// r.LoadHTMLGlob("templates/**/*") // Work as well
-	r.LoadHTMLGlob("./templates/**/*")
-	r.Static("/static/", "./assets/static")
+	r.SetHTMLTemplate(tmpl)
+	r.StaticFS("/static/", static)
 
 	todoController := deps.TodoController
 	authController := deps.AuthController
