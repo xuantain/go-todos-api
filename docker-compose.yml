@@ -13,9 +13,10 @@ networks:
 services:
   webservice:
     build:
-      dockerfile: ./docker/images/dockerfile.dev2
+      dockerfile: ./docker/images/dockerfile.prod
     environment:
       - GOPATH=/go
+      - GIN_MODE=release
       - AIR_WORKDIR=/go/src/app
       - DB_USER=user
       - DB_PASSWORD=password

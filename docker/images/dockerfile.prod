@@ -20,6 +20,8 @@ WORKDIR /go/bin/
 
 # Copy the compiled binary
 COPY --from=builder /go/bin/app /go/bin/app
+# Copy the parameters file next to the built go-app
+COPY --from=builder /go/src/app/config/parameters.yml /go/bin/parameters.yml
 
 # Copy nginx config
 COPY ./docker/nginx/nginx.conf /etc/nginx/nginx.conf
