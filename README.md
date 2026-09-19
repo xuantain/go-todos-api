@@ -1,21 +1,37 @@
-# Simple Go - Todos Api
+# go-todos-api
 
-## Some important libraries we often use are -
-`net/http, os, io, bufio, sync, time, encoding/json, encoding/xml, crypto and testing`
+Sample DockOps **instance-project**: a Go todos API plus MariaDB. Same contract as [dockops-instance](https://github.com/Dockops-Team/dockops-instance); this repo fills in the stub.
 
-## Useful Go Tools -
+| Template (`dockops-instance`) | This sample |
+|-------------------------------|-------------|
+| `docker/webservice` = nginx identity page | `docker/webservice` = Go app image |
+| No sidecars (commented examples) | `db` sidecar, config in `docker/db/` |
+| `app/` absent | `app/` = Gin todos API |
+
+Keep service **`webservice`** on **8080**. Extra services join `webservice` only, never `servermanager`.
+
+```bash
+docker network create servermanager
+cp .env.dist .env
+cp docker-compose.yml.dist docker-compose.yml
+docker compose up --build
 ```
-go build        -  Compiles the code to executable binary.
-go run          -  Run the go program without creating binary.
-go fmt          -  Format the code according to the latest golang style guide.
-go test         -  Used to run the unit tests.
-go mod          -  Manage the dependencies using Go modules.
-go vet          -  Detects common mistakes and potential issues in the code.
-pprof           -  A profiling tool for performance analysis.
-golangci-lint   -  Linting tool for golang code
+
+DockOps clones a branch, writes `.env` and `docker-compose.override.yml`, and copies `docker-compose.yml.dist` if `docker-compose.yml` is missing.
+
+## Layout
+
+```
+docker-compose.yml.dist          # contract + this sample's db sidecar
+docker-compose.override.yml.dist
+.env.dist
+docker/webservice/Dockerfile     # replaces the template nginx stub
+docker/db/my.cnf                 # MariaDB sidecar
+app/                             # Go source (listens on 8080)
 ```
 
 ## Swagger
-- Generate swagger docs every time you modify doc string.
-> swag init
-- Re-run the server.
+
+```
+swag init
+```

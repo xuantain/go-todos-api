@@ -1,39 +1,18 @@
-# Stage 1: Build the application
+# Optional live-reload image. Context is the repo root.
 FROM golang:1.25-alpine AS builder
-
 RUN apk add --no-cache git
-
 WORKDIR /go/src/app
-
 RUN go install github.com/air-verse/air@latest
-
-# Pre-cache deps
 COPY ./app/go.mod ./app/go.sum ./
-
 RUN go mod download
 
-# Build go app
-# RUN CGO_ENABLED=0 GOOS=linux go build -o /go/bin/app
-
-# Stage 2: Run the application
-# Use stage 2 to reduce the size of image also
 FROM golang:1.25-alpine
-
 WORKDIR /go/src/app
 COPY --from=builder /go/bin/air /go/bin/air
 COPY --from=builder /go/src/app /go/src/app
-
-# install dependencies for air
 RUN apk add --no-cache gcc musl-dev
-
-# Create a non-root user to run app
 RUN adduser -D -h /home/webuser -u 1001 -s /sbin/nologin webuser
-
-RUN chown -R webuser:webuser /go && \
-    chmod -R 755 /go
-
+RUN chown -R webuser:webuser /go && chmod -R 755 /go
 USER webuser
-
 EXPOSE 8080
-
 CMD ["air", "-c", ".air.toml"]

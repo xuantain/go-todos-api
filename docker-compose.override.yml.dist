@@ -1,10 +1,26 @@
-
 services:
   webservice:
     environment:
-      - 'ID=$ID'
-      - 'NAME=$NAME'
-      - 'HOSTNAME=$HOSTNAME'
-      - 'IP=$IP'
+      - 'INSTANCE_ID=$INSTANCE_ID'
+      - 'INSTANCE_NAME=$INSTANCE_NAME'
+      - 'INSTANCE_HOSTNAME=$INSTANCE_HOSTNAME'
+      - 'INSTANCE_IP=$INSTANCE_IP'
+      - 'ID=$INSTANCE_ID'
+      - 'NAME=$INSTANCE_NAME'
+      - 'HOSTNAME=$INSTANCE_HOSTNAME'
+      - 'IP=$INSTANCE_IP'
     volumes:
       - /path/local/to/backup:/srv/backup:ro
+    networks:
+      servermanager:
+        aliases:
+          - $INSTANCE_HOSTNAME
+      webservice:
+
+networks:
+  webservice:
+    name: webservice-$INSTANCE_HOSTNAME
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.$INSTANCE_IP.0.0/16

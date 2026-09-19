@@ -23,8 +23,7 @@ import (
 func main() {
 	fmt.Println("*** START APP ***")
 
-	// todo: Use .env instead?
-	environment := flag.String("env", "dev", "")
+	environment := flag.String("env", getenv("APP_ENV", "dev"), "")
 	fmt.Println("-env=", *environment)
 
 	flag.Usage = func() {
@@ -56,4 +55,11 @@ func main() {
 	port := configs.GetString("server.port")
 	url := address + ":" + port
 	server.Run(url)
+}
+
+func getenv(key, fallback string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
+	}
+	return fallback
 }
