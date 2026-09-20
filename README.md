@@ -19,6 +19,8 @@ docker compose up --build
 
 DockOps clones a branch, writes `.env` and `docker-compose.override.yml`, and copies `docker-compose.yml.dist` if `docker-compose.yml` is missing.
 
+**Advanced env** on create is free-form `KEY=value`. Those lines go into `.env` and `env_file: .env` is attached to every service. They override `${VAR:-default}` in this compose file (`APP_ENV`, `GIN_MODE`, `DB_*`, `MYSQL_ROOT_PASSWORD`, …). Identity keys (`INSTANCE_*`, `ID`, `NAME`, `HOSTNAME`, `IP`) are reserved. Other instance-projects declare their own keys.
+
 ## Layout
 
 ```

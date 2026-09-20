@@ -1,14 +1,7 @@
 services:
   webservice:
-    environment:
-      - 'INSTANCE_ID=$INSTANCE_ID'
-      - 'INSTANCE_NAME=$INSTANCE_NAME'
-      - 'INSTANCE_HOSTNAME=$INSTANCE_HOSTNAME'
-      - 'INSTANCE_IP=$INSTANCE_IP'
-      - 'ID=$INSTANCE_ID'
-      - 'NAME=$INSTANCE_NAME'
-      - 'HOSTNAME=$INSTANCE_HOSTNAME'
-      - 'IP=$INSTANCE_IP'
+    env_file:
+      - .env
     volumes:
       - /path/local/to/backup:/srv/backup:ro
     networks:
@@ -16,6 +9,9 @@ services:
         aliases:
           - $INSTANCE_HOSTNAME
       webservice:
+  db:
+    env_file:
+      - .env
 
 networks:
   webservice:
