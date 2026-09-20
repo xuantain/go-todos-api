@@ -1,6 +1,6 @@
 # Sample instance-project (Go + MariaDB) based on dockops-instance.
 # Public HTTP edge must be named `webservice` and listen on 8080.
-# Sidecars stay on the `webservice` network only — not on servermanager.
+# Sidecars stay on the `webservice` network only — not on dockops.
 
 x-instance-environment: &instance-environment
   INSTANCE_ID: ${INSTANCE_ID:-}
@@ -13,8 +13,8 @@ x-instance-environment: &instance-environment
   IP: ${INSTANCE_IP:-0}
 
 networks:
-  servermanager:
-    name: servermanager
+  dockops:
+    name: dockops
     external: true
   webservice:
     name: webservice-${INSTANCE_HOSTNAME:-default}
@@ -43,7 +43,7 @@ services:
     expose:
       - "8080"
     networks:
-      servermanager:
+      dockops:
         aliases:
           - ${INSTANCE_HOSTNAME:-default}
       webservice:

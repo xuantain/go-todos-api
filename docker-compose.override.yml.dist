@@ -5,7 +5,7 @@ services:
     volumes:
       - /path/local/to/backup:/srv/backup:ro
     networks:
-      servermanager:
+      dockops:
         aliases:
           - $INSTANCE_HOSTNAME
       webservice:

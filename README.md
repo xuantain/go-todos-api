@@ -8,10 +8,10 @@ Sample DockOps **instance-project**: a Go todos API plus MariaDB. Same contract 
 | No sidecars (commented examples) | `db` sidecar, config in `docker/db/` |
 | `app/` absent | `app/` = Gin todos API |
 
-Keep service **`webservice`** on **8080**. Extra services join `webservice` only, never `servermanager`.
+Keep service **`webservice`** on **8080**. Extra services join `webservice` only, never `dockops`.
 
 ```bash
-docker network create servermanager
+docker network create dockops
 cp .env.dist .env
 cp docker-compose.yml.dist docker-compose.yml
 docker compose up --build
